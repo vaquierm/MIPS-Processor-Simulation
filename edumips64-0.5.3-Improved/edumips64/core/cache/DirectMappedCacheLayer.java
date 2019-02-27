@@ -1,6 +1,7 @@
 package edumips64.core.cache;
 
 import edumips64.core.cache.ICache.CacheLayer;
+import edumips64.core.cache.cacheExceptions.CacheAlreadyContainsBlockException;
 import edumips64.core.cache.cacheExceptions.InvalidCacheSizeException;
 import edumips64.core.cache.cacheExceptions.InvalidPowerOfTwoException;
 import edumips64.core.cache.util.Log2;
@@ -33,6 +34,17 @@ public class DirectMappedCacheLayer implements CacheLayer {
     private final int offsetBits;
 
     /**
+     * Number of bits used for block index
+     */
+    private final int blockIndexBits;
+
+    /**
+     * Mask to isolate bits for the block index
+     * In the form of 000001111111000000
+     */
+    private final int blockIndexMask;
+
+    /**
      * Array storing the cache elements representing which block is stored in each slot
      */
     private final CacheBlock[] blocksArray;
@@ -62,10 +74,53 @@ public class DirectMappedCacheLayer implements CacheLayer {
             throw new InvalidPowerOfTwoException();
         }
 
+        this.blockIndexBits = Log2.compute(this.numberOfBlocks);
+
+        // Create the block index mask
+        for (int i = 0; i < this.blockIndexBits; i++) {
+            //TODO
+        }//Temporary for merge
+        this.blockIndexMask = 0;
+
         // Populate the cache with invalid blocks
         for (int i = 0; i < this.numberOfBlocks; i++) {
             this.blocksArray[i] = new CacheBlock();
         }
     }
 
+    @Override
+    public boolean contains(int address) {
+
+        // Isolate the tag
+        int tag = address >>> (this.offsetBits + this.blockIndexBits);
+
+        for (int i = 0; i < this.numberOfBlocks; i++) {
+            // check if the target tag matches any of the tag contained in the cache
+            if (this.blocksArray[i].valid && this.blocksArray[i].tag == tag) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public CacheBlock put(int address) throws CacheAlreadyContainsBlockException {
+
+        // Check if this block already exists
+        if (this.contains(address)) {
+            throw new CacheAlreadyContainsBlockException();
+        }
+
+        // Get the tag of the block wanted to be added
+        int tag = address >>> (this.offsetBits + this.blockIndexBits);
+
+        int blockIndex = (address >>> this.offsetBits);//TODO
+        return null;
+    }
+
+    @Override
+    public int computeTag(int address) {
+        return 0; //TODO
+    }
 }
