@@ -168,7 +168,7 @@ EduMIPS64 ChangeLog
 	- New .space directive, that allows to reserve some space in memory. It
 	  takes as a parameter an integer indicating the number of bytes to reserve. (andrea)
 	- Added a log window, that tracks the execution of EduMIPS64. Messages can
-	  be printed via the ui.GUILog methods, called on the static Main.logger
+	  be printed via the edumips64.ui.GUILog methods, called on the static Main.logger
 	  object (andrea)
 	- Ant buildfile added. On my PC, make achieved a 22 seconds build time,
 	  while Ant achieved a 4 seconds build time, due to its ability to consider

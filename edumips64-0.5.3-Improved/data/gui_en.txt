@@ -100,7 +100,7 @@ You can open the Settings dialog, can allows you to customize these options:
 -  Sync graphics with CPU in multi-step execution: syncs the GUI with the CPU
    every execution step when the program is run in multi-step mode, via F4 or F8
 -  Change pipeline colors: Allows you to choose the colors to be associated, in
-   the ui, with each pipeline stage. 
+   the edumips64.ui, with each pipeline stage.
 
 Or else, you can change the GUI language via the Change language option.
 
