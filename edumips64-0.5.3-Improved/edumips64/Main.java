@@ -61,9 +61,9 @@ public class Main extends JApplet {
     static Config cfg;
 
     static JFrame f=null;
-    private static JMenuItem open, reset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop;
+    private static JMenuItem open, reset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop, load_JSON;
     private static StatusBar sb;
-    private static JMenu file, lastfiles, exec, config, window, help, lang, tools;
+    private static JMenu file, lastfiles, exec, config, window, help, lang, tools, cache;
     private static JCheckBoxMenuItem lang_en,lang_it, pipeFrameMI, codeFrameMI;
     private static JCheckBoxMenuItem pipelineJCB, registersJCB, memoryJCB, codeJCB, cyclesJCB, statsJCB, ioJCB;
     private static java.util.List<JCheckBoxMenuItem> frames_menu_items;
@@ -578,6 +578,8 @@ public class Main extends JApplet {
         setMenuItem(statsJCB, "STATS");
         setMenuItem(registersJCB, "REGISTERS");
         setMenuItem(ioJCB, "IO");
+        setGenericMenuItem(cache, "Cache Config");
+
     }
 
     public static boolean isWindows() {
@@ -599,6 +601,7 @@ public class Main extends JApplet {
         help = new JMenu();
         lang = new JMenu ();
         tools = new JMenu ();
+        cache = new JMenu();
 
         open = new JMenuItem();
         reset = new JMenuItem();
@@ -627,6 +630,7 @@ public class Main extends JApplet {
         mb.add(tools);
         mb.add(window);
         mb.add(help);
+        mb.add(cache);
 
         // ---------------- FILE MENU
         // Open file
@@ -810,6 +814,15 @@ public class Main extends JApplet {
             }
         });
 
+        // ---------------- CACHE MENU
+        load_JSON = new JMenuItem("Load");
+        cache.add(load_JSON);
+        load_JSON.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
 
         // ---------------- HELP MENU
 
@@ -970,6 +983,11 @@ public class Main extends JApplet {
             }
         });
         lastfiles.insert(item,pos);
+    }
+
+    /** Generic set caption of menu item */
+    private static void setGenericMenuItem(JMenuItem item, String name){
+        item.setText(name);
     }
 
     /** Sets the caption of the menu item, adding, if possible, the mnemonic */
