@@ -42,7 +42,7 @@ public class CPU
 	private Register pc,old_pc;
 	private Register LO,HI;
 
-    /** Pipeline status*/
+	/** Pipeline status*/
     public enum PipeStatus {IF, ID, EX, MEM, WB};
 
 	/** CPU status.
@@ -80,7 +80,7 @@ public class CPU
 	private static CPU cpu;
 
 	/** Statistics */
-	private int cycles, instructions, RAWStalls; 
+	private int cycles, instructions, RAWStalls, memoryStalls;
 
 	/** Static initializer */
 	static {
@@ -195,6 +195,13 @@ public class CPU
 	 */
 	public int getRAWStalls() {
 		return RAWStalls;
+	}
+
+	/** Returns the number of Memory Stalls that happened inside the pipeline
+	 * @return an integer
+	 */
+	public int getMemoryStalls() {
+		return memoryStalls;
 	}
 
     /** This method performs a single pipeline step
@@ -382,6 +389,7 @@ public class CPU
 		cycles = 0;
 		instructions = 0;
 		RAWStalls = 0;
+		memoryStalls = 0;
 
 		// Reset dei registri
         for(int i = 0; i < 32; i++)

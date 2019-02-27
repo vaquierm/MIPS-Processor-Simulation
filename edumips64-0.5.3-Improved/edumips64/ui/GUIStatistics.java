@@ -35,7 +35,7 @@ import javax.swing.*;
 public class GUIStatistics extends GUIComponent {
 
 	StatPanel statPanel;
-	private int nCycles, nInstructions, rawStalls, codeSize;
+	private int nCycles, nInstructions, rawStalls, memoryStalls, codeSize;
 	private float cpi;
 	
 	public GUIStatistics () 
@@ -47,7 +47,7 @@ public class GUIStatistics extends GUIComponent {
 	class StatPanel extends JPanel {
 		JList statList;
 		String [] statistics = {" Execution", " 0 Cycles", " 0 Instructions", " ", " ", " ", " Stalls", " 0 RAW Stalls", " 0 WAW Stalls",
-		       		       " 0 WAR Stalls", " 0 Structural Stalls", " 0 Branch Taken Stalls", " 0 Branch Misprediction Stalls",
+		       		       " 0 WAR Stalls", " 0 Structural Stalls", " 0 Branch Taken Stalls", " 0 Branch Misprediction Stalls", " 0 Memory Stalls",
 				       " ", " Code Size", " 0 Bytes"};
 		public StatPanel () 
 		{
@@ -55,7 +55,7 @@ public class GUIStatistics extends GUIComponent {
 			setLayout(new BorderLayout());
 			setBackground(Color.WHITE);
 			statList = new JList(statistics);
-			statList.setFixedCellWidth(400) ;
+			statList.setFixedCellWidth(500) ;
 			statList.setCellRenderer(new MyListCellRenderer());
 			add(statList,BorderLayout.WEST);
 		}
@@ -76,6 +76,7 @@ public class GUIStatistics extends GUIComponent {
 		}
 		rawStalls = cpu.getRAWStalls();
 		codeSize = (cpu.getMemory().getInstructionsNumber())*4;
+		memoryStalls = cpu.getMemoryStalls();
 	}
 
 	public void draw ()
@@ -166,14 +167,21 @@ public class GUIStatistics extends GUIComponent {
 						label.setFont(f);
 						return label;
 					case 13:
-						label.setText(" ");
+						if(memoryStalls != 1)
+							label.setText(" " + memoryStalls + " " + "Memory Stalls");
+						else
+							label.setText(" " + memoryStalls + " " + "Memory Stalls");
+						label.setFont(f);
 						return label;
 					case 14:
+						label.setText(" ");
+						return label;
+					case 15:
 						label.setText(" " + CurrentLocale.getString("CSIZE"));
 						label.setForeground(Color.red);
 						label.setFont(f);
 						return label;
-					case 15:
+					case 16:
 						label.setText(" " + codeSize + " " + CurrentLocale.getString("BYTES"));
 						label.setFont(f);
 						return label;
