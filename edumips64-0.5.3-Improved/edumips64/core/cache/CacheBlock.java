@@ -25,17 +25,30 @@ public class CacheBlock {
      */
     public final int numBitsOffset;
 
+    /**
+     * Number of bits for the index
+     */
+    public final int numBitsIndex;
+
+    /**
+     * Base address of the block
+     */
+    public final int baseAddress;
+
 
     /**
      * Create a valid cache block
      * @param address  Any address in the cache block
      * @param numBitsOffset  Number of bits for the offset
+     * @param numBitsIndex  Number of bits used for the block index
      */
-    public CacheBlock(int address, int numBitsOffset) {
+    public CacheBlock(int address, int numBitsOffset, int numBitsIndex) {
         this.numBitsOffset = numBitsOffset;
+        this.numBitsIndex = numBitsIndex;
         this.dirty = false;
         this.valid = true;
-        this.tag = (address >> numBitsOffset);
+        this.tag = (address >>> (numBitsOffset + numBitsIndex));
+        this.baseAddress = this.tag << (numBitsIndex + numBitsOffset);
     }
 
     /**
@@ -45,6 +58,8 @@ public class CacheBlock {
         this.valid = false;
         this.dirty = false;
         this.numBitsOffset = 0;
+        this.numBitsIndex = 0;
+        this.baseAddress = 0;
         this.tag = 0;
     }
 
