@@ -378,21 +378,25 @@ public class Main extends JApplet {
             log.info("CPU Ready");
             setCacheMenuItemsStatus(false);
             setRunningMenuItemsStatus(false);
+            cache.setEnabled(true);
         }
         else if (s == CPU.CPUStatus.RUNNING) {
             log.info("CPU Running");
             setCacheMenuItemsStatus(false);
             setRunningMenuItemsStatus(true);
+            cache.setEnabled(false);
         }
         else if(s == CPU.CPUStatus.STOPPING) {
             log.info("CPU Stopping");
             setCacheMenuItemsStatus(false);
             setRunningMenuItemsStatus(true);
+            cache.setEnabled(false);
         }
         else if (s == CPU.CPUStatus.HALTED) {
             log.info("CPU Halted");
             setCacheMenuItemsStatus(true);
             setRunningMenuItemsStatus(false);
+            cache.setEnabled(false);
         }
     }
 
@@ -815,7 +819,7 @@ public class Main extends JApplet {
         });
 
         // ---------------- CACHE MENU
-        load_JSON = new JMenuItem("Load");
+        load_JSON = new JMenuItem("Load JSON");
         cache.add(load_JSON);
         load_JSON.addActionListener(new ActionListener() {
             @Override
