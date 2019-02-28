@@ -1,6 +1,7 @@
-package edumips64.core.cache;
+package edumips64.core.cache.cacheLayer;
 
-import edumips64.core.cache.ICache.CacheLayer;
+import edumips64.core.cache.CacheBlock;
+import edumips64.core.cache.cacheExceptions.BlockNotFoundException;
 import edumips64.core.cache.cacheExceptions.CacheAlreadyContainsBlockException;
 import edumips64.core.cache.cacheExceptions.InvalidCacheSizeException;
 import edumips64.core.cache.cacheExceptions.InvalidPowerOfTwoException;
@@ -9,24 +10,7 @@ import edumips64.core.cache.util.Log2;
 /**
  * Cache layer which obeys the direct mapping rule
  */
-public class DirectMappedCacheLayer implements CacheLayer {
-
-    /**
-     * The size of the layer
-     * Note: Must be a power of two
-     */
-    public final int cacheSize;
-
-    /**
-     * The size of the blocks
-     * Note: the cache size mod blockSize must equal zero
-     */
-    public final int blockSize;
-
-    /**
-     * The number of blocks in the cache
-     */
-    public final int numberOfBlocks;
+public class DirectMappedCacheLayer extends CacheLayer {
 
     /**
      * Number of bits used for offset at this layer
@@ -56,7 +40,7 @@ public class DirectMappedCacheLayer implements CacheLayer {
      * @param blockSize  Size of block.
      * @throws InvalidCacheSizeException
      */
-    public DirectMappedCacheLayer(int cacheSize, int blockSize) throws InvalidCacheSizeException, InvalidPowerOfTwoException {
+    public DirectMappedCacheLayer(int cacheSize, int blockSize, int accessTime, WriteStrategy writeStrategy) throws InvalidCacheSizeException, InvalidPowerOfTwoException {
         this.cacheSize = cacheSize;
         this.blockSize = blockSize;
 
@@ -87,6 +71,10 @@ public class DirectMappedCacheLayer implements CacheLayer {
         for (int i = 0; i < this.numberOfBlocks; i++) {
             this.blocksArray[i] = new CacheBlock();
         }
+
+        this.writeStrategy = writeStrategy;
+
+        this.accessTime = accessTime;
     }
 
     @Override
@@ -98,6 +86,18 @@ public class DirectMappedCacheLayer implements CacheLayer {
     }
 
     @Override
+    public void dirtyBlock(int address) throws BlockNotFoundException {
+
+        if (!contains(address)) {
+            throw new BlockNotFoundException();
+        }
+
+        int blockIndex = ((address & this.blockIndexMask) >>> this.offsetBits);
+
+        this.blocksArray[blockIndex].setDirty(true);
+    }
+
+    @Override
     public CacheBlock put(int address) throws CacheAlreadyContainsBlockException {
 
         // Check if this block already exists
@@ -105,15 +105,12 @@ public class DirectMappedCacheLayer implements CacheLayer {
             throw new CacheAlreadyContainsBlockException();
         }
 
-        // Get the tag of the block wanted to be added
-        int tag = computeTag(address);
-
         int blockIndex = ((address & this.blockIndexMask) >>> this.offsetBits);
 
         CacheBlock oldBlock = this.blocksArray[blockIndex];
 
         // Create the new block and insert it
-        this.blocksArray[blockIndex] = new CacheBlock(address, this.offsetBits);
+        this.blocksArray[blockIndex] = new CacheBlock(address, this.offsetBits, this.blockIndexBits);
 
         // Return the old block
         return  oldBlock;

@@ -1,9 +1,7 @@
 package edumips64.core.cache;
 
-import edumips64.core.cache.ICache.CacheLayer;
-
-import java.util.LinkedList;
-import java.util.List;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer.MemoryAccessType;
+import edumips64.core.cache.cacheLayer.CacheLayer;
 
 /**
  * Manages the memory hierarchy. Main interface the that the Memory goes through.
@@ -23,14 +21,13 @@ public class CacheManager {
     /**
      * Layers of caches
      */
-    List<CacheLayer> cacheLayers;
+    private CacheLayer[] cacheLayers;
 
     /**
      * Create an empty cache with no access time to main memory
      */
     private CacheManager() {
-        this.mainMemoryAccessTime = 0;
-        this.cacheLayers = new LinkedList<>();
+        reset();
     }
 
     /**
@@ -52,7 +49,7 @@ public class CacheManager {
         return INSTANCE;
     }
 
-    public List<CacheLayer> getCacheLayers() {
+    public CacheLayer[] getCacheLayers() {
         return this.cacheLayers;
     }
 
@@ -72,7 +69,7 @@ public class CacheManager {
      */
     public void reset() {
         this.mainMemoryAccessTime = 0;
-        this.cacheLayers = new LinkedList<>();
+        this.cacheLayers = new CacheLayer[0];
     }
 
     public int getMainMemoryAccessTime() {
@@ -81,11 +78,112 @@ public class CacheManager {
 
     /**
      * Calculate the latency of the memory access
-     * @param address  address of the memory access
+     * @param address  Address of the memory access
+     * @param accessType  The type of access to memory
      * @return  The latency of the access
      */
-    public int calculateLatency(int address) {
-        // TODO Calculate the latency
+    public int calculateLatency(int address, MemoryAccessType accessType) {
         return 0;
     }
+
+    /**
+     * Calculate the memory latency to write to a particular cache
+     * @param layerNumber  Index of the cache to write to
+     * @param address  Address to write to
+     * @return  The latency of the access
+     */
+    private int writeToLayer(int layerNumber, int address) throws Exception {
+
+        if (layerNumber < 0 || layerNumber >= cacheLayers.length)
+            return mainMemoryAccessTime;
+
+        CacheLayer layer = cacheLayers[layerNumber];
+
+        int delay = 0;
+
+        switch (layer.getWriteStrategy()) {
+            case WRITE_BACK:
+                // Check if hit or miss
+                if (layer.contains(address)) {
+                    // Write hit, just write to this layer
+                    delay += layer.getAccessTime();
+                }
+                else {
+                    // Write miss
+                    // First act like a read miss, go get the block from lower layer
+                    delay += readFromLayer(layerNumber + 1, address);
+
+                    // Place the block in the cache
+                    CacheBlock evictedBlock = layer.put(address);
+
+                    // If the evicted block is dirty, write it back to lower layer
+                    if (evictedBlock.getDirty() && evictedBlock.valid) {
+                        delay += writeToLayer(layerNumber + 1, evictedBlock.baseAddress);
+                    }
+
+                    // Write the data to the cache block that was just fetched to this layer
+                    delay += layer.getAccessTime();
+                }
+
+                // In both cases, make the block dirty since we just wrote to it
+                layer.dirtyBlock(address);
+                break;
+            case WRITE_THROUGH:
+                // Check if hit or miss
+                if (layer.contains(address)) {
+                    // Write hit
+                    // TODO
+                }
+                else {
+                    // Write miss
+                    // TODO
+                }
+                break;
+        }
+
+        return delay;
+    }
+
+    /**
+     * Calculate the latency to read from a particular cache
+     * @param layerNumber  Index of the cache to read from
+     * @param address  Address to read from
+     * @return  The latency of the access
+     */
+    private int readFromLayer(int layerNumber, int address) throws Exception {
+
+        if (layerNumber < 0 || layerNumber >= cacheLayers.length)
+            throw new Exception("Invalid cache layer access: layer " + layerNumber + " out of " + cacheLayers.length);
+
+        CacheLayer layer = cacheLayers[layerNumber];
+
+        int delay = 0;
+
+        switch (layer.getWriteStrategy()) {
+            case WRITE_BACK:
+                // Check if hit or miss
+                if (layer.contains(address)) {
+                    // Read hit
+                }
+                else {
+                    // Read miss
+                }
+                break;
+            case WRITE_THROUGH:
+                // Check if hit or miss
+                if (layer.contains(address)) {
+                    // Read hit
+                    //TODO
+                }
+                else {
+                    // Read miss
+                    //TODO
+                }
+                break;
+        }
+
+        return delay;
+    }
+
+
 }
