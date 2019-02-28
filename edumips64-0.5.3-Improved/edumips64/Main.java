@@ -61,9 +61,9 @@ public class Main extends JApplet {
     static Config cfg;
 
     static JFrame f=null;
-    private static JMenuItem open, reset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop;
+    private static JMenuItem open, softReset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop, load_JSON, hardReset;
     private static StatusBar sb;
-    private static JMenu file, lastfiles, exec, config, window, help, lang, tools;
+    private static JMenu file, lastfiles, exec, config, window, help, lang, tools, cache;
     private static JCheckBoxMenuItem lang_en,lang_it, pipeFrameMI, codeFrameMI;
     private static JCheckBoxMenuItem pipelineJCB, registersJCB, memoryJCB, codeJCB, cyclesJCB, statsJCB, ioJCB;
     private static java.util.List<JCheckBoxMenuItem> frames_menu_items;
@@ -378,21 +378,25 @@ public class Main extends JApplet {
             log.info("CPU Ready");
             setCacheMenuItemsStatus(false);
             setRunningMenuItemsStatus(false);
+            cache.setEnabled(true);
         }
         else if (s == CPU.CPUStatus.RUNNING) {
             log.info("CPU Running");
             setCacheMenuItemsStatus(false);
             setRunningMenuItemsStatus(true);
+            cache.setEnabled(false);
         }
         else if(s == CPU.CPUStatus.STOPPING) {
             log.info("CPU Stopping");
             setCacheMenuItemsStatus(false);
             setRunningMenuItemsStatus(true);
+            cache.setEnabled(false);
         }
         else if (s == CPU.CPUStatus.HALTED) {
             log.info("CPU Halted");
             setCacheMenuItemsStatus(true);
             setRunningMenuItemsStatus(false);
+            cache.setEnabled(false);
         }
     }
 
@@ -558,7 +562,7 @@ public class Main extends JApplet {
         setMenuItem(tools, "Menu.TOOLS");
         setMenuItem(open, "MenuItem.OPEN");
         setMenuItem(lastfiles, "MenuItem.OPENLAST");
-        setMenuItem(reset, "MenuItem.RESET");
+        setMenuItem(softReset, "MenuItem.RESET");
         setMenuItem(exit, "MenuItem.EXIT");
         setMenuItem(single_cycle, "MenuItem.SINGLE_CYCLE");
         setMenuItem(run_to, "MenuItem.RUN_TO");
@@ -578,6 +582,9 @@ public class Main extends JApplet {
         setMenuItem(statsJCB, "STATS");
         setMenuItem(registersJCB, "REGISTERS");
         setMenuItem(ioJCB, "IO");
+        setGenericMenuItem(cache, "Cache Config");
+        setGenericMenuItem(hardReset, "Hard Reset");
+
     }
 
     public static boolean isWindows() {
@@ -599,9 +606,11 @@ public class Main extends JApplet {
         help = new JMenu();
         lang = new JMenu ();
         tools = new JMenu ();
+        cache = new JMenu();
 
         open = new JMenuItem();
-        reset = new JMenuItem();
+        softReset = new JMenuItem();
+        hardReset = new JMenuItem();
         exit = new JMenuItem();
         dinero_tracefile = new JMenuItem();
         single_cycle = new JMenuItem();
@@ -612,6 +621,7 @@ public class Main extends JApplet {
         dinFrontend = new JMenuItem();
         manual = new JMenuItem();
         settings = new JMenuItem();
+
         pipelineJCB = new JCheckBoxMenuItem();
         codeJCB = new JCheckBoxMenuItem();
         memoryJCB = new JCheckBoxMenuItem();
@@ -627,6 +637,7 @@ public class Main extends JApplet {
         mb.add(tools);
         mb.add(window);
         mb.add(help);
+        mb.add(cache);
 
         // ---------------- FILE MENU
         // Open file
@@ -668,11 +679,20 @@ public class Main extends JApplet {
 
 
         // Reset the simulator and the CPU
-        file.add(reset);
-        reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
-        reset.addActionListener(new ActionListener (){
+        file.add(softReset);
+        softReset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        softReset.addActionListener(new ActionListener (){
             public void actionPerformed(ActionEvent e) {
                 resetSimulator(true);
+            }
+        });
+
+        // Reset the simulator and the CPU
+        file.add(hardReset);
+        hardReset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+        hardReset.addActionListener(new ActionListener (){
+            public void actionPerformed(ActionEvent e) {
+                resetSimulator(false);
             }
         });
 
@@ -810,6 +830,15 @@ public class Main extends JApplet {
             }
         });
 
+        // ---------------- CACHE MENU
+        load_JSON = new JMenuItem("Load JSON");
+        cache.add(load_JSON);
+        load_JSON.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
 
         // ---------------- HELP MENU
 
@@ -970,6 +999,11 @@ public class Main extends JApplet {
             }
         });
         lastfiles.insert(item,pos);
+    }
+
+    /** Generic set caption of menu item */
+    private static void setGenericMenuItem(JMenuItem item, String name){
+        item.setText(name);
     }
 
     /** Sets the caption of the menu item, adding, if possible, the mnemonic */
