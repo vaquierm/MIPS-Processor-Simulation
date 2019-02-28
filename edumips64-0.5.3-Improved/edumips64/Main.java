@@ -61,7 +61,7 @@ public class Main extends JApplet {
     static Config cfg;
 
     static JFrame f=null;
-    private static JMenuItem open, reset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop, load_JSON;
+    private static JMenuItem open, softReset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop, load_JSON, hardReset;
     private static StatusBar sb;
     private static JMenu file, lastfiles, exec, config, window, help, lang, tools, cache;
     private static JCheckBoxMenuItem lang_en,lang_it, pipeFrameMI, codeFrameMI;
@@ -562,7 +562,7 @@ public class Main extends JApplet {
         setMenuItem(tools, "Menu.TOOLS");
         setMenuItem(open, "MenuItem.OPEN");
         setMenuItem(lastfiles, "MenuItem.OPENLAST");
-        setMenuItem(reset, "MenuItem.RESET");
+        setMenuItem(softReset, "MenuItem.RESET");
         setMenuItem(exit, "MenuItem.EXIT");
         setMenuItem(single_cycle, "MenuItem.SINGLE_CYCLE");
         setMenuItem(run_to, "MenuItem.RUN_TO");
@@ -583,6 +583,7 @@ public class Main extends JApplet {
         setMenuItem(registersJCB, "REGISTERS");
         setMenuItem(ioJCB, "IO");
         setGenericMenuItem(cache, "Cache Config");
+        setGenericMenuItem(hardReset, "Hard Reset");
 
     }
 
@@ -608,7 +609,8 @@ public class Main extends JApplet {
         cache = new JMenu();
 
         open = new JMenuItem();
-        reset = new JMenuItem();
+        softReset = new JMenuItem();
+        hardReset = new JMenuItem();
         exit = new JMenuItem();
         dinero_tracefile = new JMenuItem();
         single_cycle = new JMenuItem();
@@ -619,6 +621,7 @@ public class Main extends JApplet {
         dinFrontend = new JMenuItem();
         manual = new JMenuItem();
         settings = new JMenuItem();
+
         pipelineJCB = new JCheckBoxMenuItem();
         codeJCB = new JCheckBoxMenuItem();
         memoryJCB = new JCheckBoxMenuItem();
@@ -676,11 +679,20 @@ public class Main extends JApplet {
 
 
         // Reset the simulator and the CPU
-        file.add(reset);
-        reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
-        reset.addActionListener(new ActionListener (){
+        file.add(softReset);
+        softReset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        softReset.addActionListener(new ActionListener (){
             public void actionPerformed(ActionEvent e) {
                 resetSimulator(true);
+            }
+        });
+
+        // Reset the simulator and the CPU
+        file.add(hardReset);
+        hardReset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+        hardReset.addActionListener(new ActionListener (){
+            public void actionPerformed(ActionEvent e) {
+                resetSimulator(false);
             }
         });
 
