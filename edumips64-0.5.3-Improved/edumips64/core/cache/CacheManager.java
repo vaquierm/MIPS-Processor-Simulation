@@ -1,5 +1,7 @@
 package edumips64.core.cache;
 
+import edumips64.core.cache.cacheExceptions.BlockNotFoundException;
+import edumips64.core.cache.cacheExceptions.CacheAlreadyContainsBlockException;
 import edumips64.core.cache.cacheLayer.ICache.ICacheLayer.MemoryAccessType;
 import edumips64.core.cache.cacheLayer.CacheLayer;
 
@@ -82,8 +84,26 @@ public class CacheManager {
      * @param accessType  The type of access to memory
      * @return  The latency of the access
      */
-    public int calculateLatency(int address, MemoryAccessType accessType) {
-        return 0;
+    public int calculateLatency(int address, MemoryAccessType accessType) throws CacheAlreadyContainsBlockException, BlockNotFoundException {
+
+        int delay = 0;
+
+        try {
+            switch (accessType) {
+                case READ:
+                    delay = readFromLayer(0, address);
+                    break;
+                case WRITE:
+                    delay = writeToLayer(0, address);
+                    break;
+            }
+        } catch (Exception e) {
+            System.err.println("Delay Calculation error: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+
+        return delay;
     }
 
     /**
@@ -92,7 +112,7 @@ public class CacheManager {
      * @param address  Address to write to
      * @return  The latency of the access
      */
-    private int writeToLayer(int layerNumber, int address) throws Exception {
+    private int writeToLayer(int layerNumber, int address) throws CacheAlreadyContainsBlockException, BlockNotFoundException {
 
         if (layerNumber < 0 || layerNumber >= cacheLayers.length)
             return mainMemoryAccessTime;
@@ -150,10 +170,10 @@ public class CacheManager {
      * @param address  Address to read from
      * @return  The latency of the access
      */
-    private int readFromLayer(int layerNumber, int address) throws Exception {
+    private int readFromLayer(int layerNumber, int address) throws CacheAlreadyContainsBlockException, BlockNotFoundException {
 
         if (layerNumber < 0 || layerNumber >= cacheLayers.length)
-            throw new Exception("Invalid cache layer access: layer " + layerNumber + " out of " + cacheLayers.length);
+            return mainMemoryAccessTime;
 
         CacheLayer layer = cacheLayers[layerNumber];
 
