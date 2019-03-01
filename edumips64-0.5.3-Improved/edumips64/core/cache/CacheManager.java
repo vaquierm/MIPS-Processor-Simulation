@@ -46,7 +46,7 @@ public class CacheManager {
      */
     public static CacheManager getInstance() {
         if (INSTANCE == null) {
-            return new CacheManager();
+            INSTANCE = new CacheManager();
         }
         return INSTANCE;
     }
