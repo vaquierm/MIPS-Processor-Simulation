@@ -59,7 +59,7 @@ public class CacheManager {
      * Sets up the cache layers based on a config file
      * @param configFile  config file filepath
      */
-    private void setup(String configFile) {
+    public void setup(String configFile) {
 
         // TODO : Parse the file and create the layers
         // Do this in a encoder decoder file

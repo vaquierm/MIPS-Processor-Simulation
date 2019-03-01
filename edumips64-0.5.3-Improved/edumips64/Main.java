@@ -22,6 +22,7 @@
  */
 package edumips64;
 
+import edumips64.core.cache.CacheManager;
 import edumips64.ui.*;
 import edumips64.img.*;
 import edumips64.utils.*;
@@ -45,6 +46,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.KeyStroke.*;
 import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /** Entry point of EduMIPS64
  * @author Andrea Spadaccini, Antonella Scandura, Vanni Rizzo
@@ -831,12 +833,23 @@ public class Main extends JApplet {
         });
 
         // ---------------- CACHE MENU
+        /**
+         * Adds the Load JSON button to the cache menu, opens file chooser and passes the json to the CacheManager setup.
+         */
         load_JSON = new JMenuItem("Load JSON");
         cache.add(load_JSON);
         load_JSON.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON Files", "json");
+                jfc.setFileFilter(filter);
+                int val = jfc.showOpenDialog(f);
+                if (val == JFileChooser.APPROVE_OPTION) {
+                    String filePath = jfc.getSelectedFile().getPath();
+                    Config.set("lastdir", jfc.getCurrentDirectory());
+                    CacheManager.getInstance().setup(filePath);
+                }
+                jfc.resetChoosableFileFilters();
             }
         });
 
