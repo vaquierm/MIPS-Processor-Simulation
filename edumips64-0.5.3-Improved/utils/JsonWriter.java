@@ -8,14 +8,14 @@ import java.util.List;
 
 public class JsonWriter {
 
-    CacheManager cm;
-    List<CacheLayer> layers;
     public void write() {
-        // TODO: Add methods to get the cache manager and the layers
         JSONObject obj = new JSONObject();
+        CacheManager cm = CacheManager.getInstance();
+        CacheLayer[] layers = (CacheLayer[]) cm.getCacheLayers();
+        obj.put("number_of_caches", layers.length);
         JSONArray blockSizes = new JSONArray();
         for(CacheLayer cl : layers) {
-         //   array.add("block_size:" cl.)
+            blockSizes.add(cl)
         }
     }
 }
