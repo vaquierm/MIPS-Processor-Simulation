@@ -266,7 +266,8 @@ public class CacheManager {
                 if (layer.contains(address)) {
                     // Write hit, just write to this layer
                     delay += layer.getAccessTime();
-                } else {
+                }
+                else {
                     // Write miss
                     // First act like a read miss, go get the block from lower layer
                     delay += readFromLayer(layerNumber + 1, address);
@@ -290,11 +291,13 @@ public class CacheManager {
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Write hit
-                    // TODO
-                } else {
-                    // Write miss
-                    // TODO
+                    delay += layer.getAccessTime();
+                    CacheBlock cb = layer.put(address);
+                    cb.setDirty(false);
                 }
+
+                delay += writeToLayer(layerNumber + 1, address);
+
                 break;
         }
 
@@ -309,7 +312,6 @@ public class CacheManager {
      * @return The latency of the access
      */
     private int readFromLayer(int layerNumber, int address) throws CacheAlreadyContainsBlockException, BlockNotFoundException {
-
         if (layerNumber < 0 || layerNumber >= cacheLayers.length)
             return mainMemoryAccessTime;
 
@@ -322,23 +324,34 @@ public class CacheManager {
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
-                } else {
-                    // Read miss
+                    delay += layer.getAccessTime();
+
                 }
+                else {
+                    // Read miss
+                    delay += readFromLayer(layerNumber + 1, address);
+                    CacheBlock cb = layer.put(address);
+                    if(cb.valid && cb.getDirty()) {
+                        delay += writeToLayer(layerNumber + 1, cb.baseAddress);
+                    }
+                }
+
                 break;
             case WRITE_THROUGH:
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
-                    //TODO
-                } else {
+                    delay += layer.getAccessTime();
+                }
+                else {
                     // Read miss
-                    //TODO
+                    delay += readFromLayer(layerNumber + 1, address);
                 }
                 break;
         }
 
         return delay;
+
     }
 
 

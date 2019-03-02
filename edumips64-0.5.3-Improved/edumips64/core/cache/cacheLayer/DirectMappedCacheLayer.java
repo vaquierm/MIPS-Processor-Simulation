@@ -93,7 +93,7 @@ public class DirectMappedCacheLayer extends CacheLayer {
         this.blocksArray[blockIndex] = new CacheBlock(address, this.offsetBits, this.blockIndexBits);
 
         // Return the old block
-        return  oldBlock;
+        return oldBlock;
     }
 
     @Override
