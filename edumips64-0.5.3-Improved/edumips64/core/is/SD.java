@@ -25,6 +25,7 @@
 
 package edumips64.core.is;
 import edumips64.core.*;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.utils.*;
 /** <pre>
  *       Syntax: SD rt, offset(base)
@@ -56,7 +57,7 @@ public class SD extends Storing {
 			//For the trace file
 			Dinero din=Dinero.getInstance();
 			din.Store(Converter.binToHex(Converter.positiveIntToBin(64,address)),8);
-			MemoryElement memEl = memory.getCell((int)address);
+			MemoryElement memEl = memory.getCell((int)address, ICacheLayer.MemoryAccessType.WRITE);
 			//writing on the memory element the RT register
 			//memEl.writeDoubleWord(TR[RT_FIELD].getValue());
 			memEl.setBits(TR[RT_FIELD].getBinString(),0);

@@ -23,6 +23,8 @@
 
 package edumips64.core;
 
+import edumips64.core.cache.CacheManager;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer.MemoryAccessType;
 import edumips64.utils.*;
 import java.util.*;
 import edumips64.core.is.*;
@@ -94,11 +96,20 @@ public class Memory{
 	 * @return MemoryElement with address equals to index*8
 	 * @throws MemoryElementNotFoundException if given index is too large for this memory.
 	 */
-	public MemoryElement getCell(int address) throws MemoryElementNotFoundException{
+	public MemoryElement getCell(int address, MemoryAccessType accessType) throws MemoryElementNotFoundException {
 		int index = address / 8;
 		
 		if(index >= CPU.DATALIMIT || index < 0 || address < 0)
 			throw new MemoryElementNotFoundException();
+
+		try {
+			int delay = CacheManager.getInstance().calculateLatency(address, accessType);
+		}
+		catch (Exception e) {
+			System.err.println("Something went wrong while calculating the cache delay for address " + address);
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 
 		return cells.get(index);
 	}
