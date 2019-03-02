@@ -1,0 +1,19 @@
+{
+  "mmat" : 50,
+  "caches" : [
+    {
+      "size" : "64KB",
+      "blockSize" : "4KB",
+      "accessTime" : 5,
+      "ways" : 3,
+      "writeStrategy" :  "WRITE_BACK"
+    },
+    {
+      "size" : "128KB",
+      "blockSize" : "16KB",
+      "accessTime" : 15,
+      "ways" : 4,
+      "writeStrategy" :  "WRITE_THROUGH"
+    }
+  ]
+}
