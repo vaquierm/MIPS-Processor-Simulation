@@ -45,7 +45,7 @@ public class DirectMappedCacheLayer extends CacheLayer {
         // Create the block index mask
         int mask = 0;
         for (int i = 0; i < this.blockIndexBits; i++) {
-            mask = (mask++) << 1;
+            mask = (mask + 1) << 1;
         }
         mask = mask << this.offsetBits;
         this.blockIndexMask = mask;
