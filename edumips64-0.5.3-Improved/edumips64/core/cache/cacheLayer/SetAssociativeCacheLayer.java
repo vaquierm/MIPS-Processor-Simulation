@@ -80,25 +80,53 @@ public class SetAssociativeCacheLayer extends CacheLayer {
 
     }
 
+    /**
+     * Finds a block in a specific set, null is returned if it is not found
+     * @param setIndex  Index of the set in which to look
+     * @param tag  Tag of the target block
+     * @return  The block in the set with matching tag. Null if it is not present
+     */
+    private CacheBlock findBlockInSet(int setIndex, int tag) {
+        // Get the set in which we are looking for
+
+        CacheBlock[] set = this.setsArray[setIndex];
+        for (int i = 0; i < this.numberOfBlocksPerSet; i++) {
+            if (set[i].tag == tag) {
+                return set[i];
+            }
+        }
+
+        // If it was never found, return null
+        return null;
+    }
+
 
 
     @Override
     public boolean contains(int address) {
-        return false;
+        int setIndex = ((address & this.setIndexMask) >>> this.offsetBits);
+
+        return findBlockInSet(setIndex, computeTag(address)) != null;
     }
 
     @Override
     public CacheBlock put(int address) throws CacheAlreadyContainsBlockException {
-        return null;
+        return null; //TODO: Need to figure out eviction policy. Do we want to add a layer of abstraction to do eviction?
     }
 
     @Override
     public void dirtyBlock(int address) throws BlockNotFoundException {
+        if (!contains(address)) {
+            throw new BlockNotFoundException();
+        }
 
+        int setIndex = ((address & this.setIndexMask) >>> this.offsetBits);
+
+        findBlockInSet(setIndex, computeTag(address)).setDirty(true);
     }
 
     @Override
     public int computeTag(int address) {
-        return 0;
+        return address >>> (this.offsetBits + this.setIndexBits);
     }
 }
