@@ -1,9 +1,7 @@
 package edumips64.core.cache;
 
-import edumips64.core.cache.cacheExceptions.BlockNotFoundException;
-import edumips64.core.cache.cacheExceptions.CacheAlreadyContainsBlockException;
-import edumips64.core.cache.cacheExceptions.InvalidCacheSizeException;
-import edumips64.core.cache.cacheExceptions.InvalidPowerOfTwoException;
+import edumips64.core.cache.cacheExceptions.*;
+import edumips64.core.cache.cacheLayer.DirectMappedCacheLayer;
 import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.core.cache.cacheLayer.ICache.ICacheLayer.MemoryAccessType;
 import edumips64.core.cache.cacheLayer.CacheLayer;
@@ -11,6 +9,7 @@ import edumips64.core.cache.cacheLayer.CacheLayer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import sun.misc.Cache;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -109,58 +108,93 @@ public class CacheManager {
                 validateCacheLayerConfig(layerConfig);
 
                 layerConfigs[i] = layerConfig;
+
+            }
+            // Set the configuration values
+            INSTANCE.cacheLayers = generateCacheLayers(layerConfigs);
+            INSTANCE.mainMemoryAccessTime = mainMemAT;
+
+
+        } catch(FileNotFoundException e){
+            e.printStackTrace();
+        } catch(IOException e){
+            e.printStackTrace();
+        } catch (org.json.simple.parser.ParseException e) {
+            e.printStackTrace();
+        } catch (InvalidAccessTimeException e) {
+            e.printStackTrace();
+        } catch (InvalidAssociativityException e) {
+            e.printStackTrace();
+        } catch (InvalidCacheSizeStringFormat e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Generates cache layers from given configurations
+     * @param configs
+     * @return
+     */
+    private CacheLayer[] generateCacheLayers(CacheLayerConfig[] configs){
+        CacheLayer[] caches = new CacheLayer[configs.length];
+        // Only have Direct mapped cache available right now
+        for(int i=0; i<caches.length; i++){
+            CacheLayerConfig conf = configs[i];
+            try {
+                if(conf.ways == 1){
+                    caches[i] = new DirectMappedCacheLayer(conf.size, conf.blockSize, conf.accessTime, conf.strat);
+                }
+                else if (conf.ways == 0) {
+                    // TODO: implement for fully associative caches
+                }
+                else {
+                    //TODO: implement for n-way associative caches
+                }
+
+            } catch (InvalidCacheSizeException e) {
+                e.printStackTrace();
+            } catch (InvalidPowerOfTwoException e) {
+                e.printStackTrace();
             }
         }
-        catch(FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-        catch (org.json.simple.parser.ParseException e) {
-            e.printStackTrace();
-        }
-        catch (InvalidPowerOfTwoException e) {
-            e.printStackTrace();
-        }
-        catch (InvalidCacheSizeException e) {
-            e.printStackTrace();
-        }
-    }
-    private boolean isPowerofTwo (int i){
-       return (i >0) && (i & i-1)==0;
-    }
-    private void validateCacheLayerConfig(CacheLayerConfig conf) throws InvalidPowerOfTwoException, InvalidCacheSizeException {
-        if (!isPowerofTwo(conf.size)){
-            throw new InvalidPowerOfTwoException();
-        }
-        if (!isPowerofTwo(conf.blockSize)){
-            throw new InvalidPowerOfTwoException();
-        }
-        if (conf.size % conf.blockSize != 0) {
-            throw new InvalidCacheSizeException();
-        }
-        if (conf.accessTime <1) {
 
+        return caches;
+    }
+
+    /**
+     * Validates a given cache layer configuration
+     * @param conf the configuration of a given cache layer
+     * @throws InvalidPowerOfTwoException
+     * @throws InvalidCacheSizeException
+     * @return if cache layer is valid or not
+     */
+    private void validateCacheLayerConfig(CacheLayerConfig conf) throws InvalidAccessTimeException, InvalidAssociativityException {
+        if (conf.accessTime <1) {
+            throw new InvalidAccessTimeException();
         }
         if (conf.ways < 0) {
-
+            throw new InvalidAssociativityException();
         }
     }
 
-    private int byteValueFromString(String size){
+    /**
+     * Converts strings of format XXB,XXKB,XXMB to an int byte count, throws if string is improperly formatted
+     * @param size
+     */
+    private int byteValueFromString(String size) throws InvalidCacheSizeStringFormat {
         if (size.contains("B")) {
             int index = size.indexOf('B');
             switch (size.charAt(index-1)){
                 case 'K': return Integer.parseInt(size.substring(0, index -1)) * 1024;
                 case 'M': return Integer.parseInt(size.substring(0, index -1)) * 1024 * 1024;
+                case 'G' : return Integer.parseInt(size.substring(0, index -1)) * 1024 * 1024 * 1024;
                 default: return Integer.parseInt(size.substring(0,index-1));
             }
         }
         else {
-            // TODO throw exception if not proper format
+            throw new InvalidCacheSizeStringFormat();
         }
-        return 0;
     }
 
     /**
