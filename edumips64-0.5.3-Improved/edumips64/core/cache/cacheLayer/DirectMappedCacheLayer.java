@@ -13,11 +13,6 @@ import edumips64.core.cache.util.Log2;
 public class DirectMappedCacheLayer extends CacheLayer {
 
     /**
-     * Number of bits used for offset at this layer
-     */
-    private final int offsetBits;
-
-    /**
      * Number of bits used for block index
      */
     private final int blockIndexBits;
@@ -41,22 +36,9 @@ public class DirectMappedCacheLayer extends CacheLayer {
      * @throws InvalidCacheSizeException
      */
     public DirectMappedCacheLayer(int cacheSize, int blockSize, int accessTime, WriteStrategy writeStrategy) throws InvalidCacheSizeException, InvalidPowerOfTwoException {
-        this.cacheSize = cacheSize;
-        this.blockSize = blockSize;
-
-        if (this.cacheSize % this.blockSize == 0) {
-            throw new InvalidCacheSizeException();
-        }
-
-        this.numberOfBlocks = this.cacheSize / this.blockSize;
+        super(cacheSize, blockSize, accessTime, writeStrategy);
 
         this.blocksArray = new CacheBlock[this.numberOfBlocks];
-
-        this.offsetBits = Log2.compute(this.blockSize);
-
-        if (this.offsetBits < 0 || Log2.compute(cacheSize) < 0) {
-            throw new InvalidPowerOfTwoException();
-        }
 
         this.blockIndexBits = Log2.compute(this.numberOfBlocks);
 
@@ -65,6 +47,7 @@ public class DirectMappedCacheLayer extends CacheLayer {
         for (int i = 0; i < this.blockIndexBits; i++) {
             mask = (mask++) << 1;
         }
+        mask = mask << this.offsetBits;
         this.blockIndexMask = mask;
 
         // Populate the cache with invalid blocks
@@ -72,9 +55,6 @@ public class DirectMappedCacheLayer extends CacheLayer {
             this.blocksArray[i] = new CacheBlock();
         }
 
-        this.writeStrategy = writeStrategy;
-
-        this.accessTime = accessTime;
     }
 
     @Override
