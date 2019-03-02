@@ -10,6 +10,7 @@ import edumips64.core.cache.cacheLayer.SetAssociativeCacheLayer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class CacheManager {
      */
     class CacheLayerConfig {
         int accessTime;
-        int ways;
+        String mappingScheme;
         int size;
         int blockSize;
         ICacheLayer.WriteStrategy strategy;
@@ -103,7 +104,7 @@ public class CacheManager {
                 JSONObject cache = (JSONObject) caches.get(i);
                 CacheLayerConfig layerConfig = new CacheLayerConfig();
                 layerConfig.accessTime = toIntExact((long) cache.get("accessTime"));
-                layerConfig.ways = toIntExact((long) cache.get("ways"));
+                layerConfig.mappingScheme = (String) cache.get("mappingScheme");
                 layerConfig.size = byteValueFromString((String) cache.get("size"));
                 layerConfig.blockSize = byteValueFromString((String) cache.get("blockSize"));
                 layerConfig.strategy = ICacheLayer.WriteStrategy.valueOf((String) cache.get("writeStrategy"));
@@ -126,8 +127,6 @@ public class CacheManager {
             e.printStackTrace();
         } catch (InvalidAccessTimeException e) {
             e.printStackTrace();
-        } catch (InvalidAssociativityException e) {
-            e.printStackTrace();
         } catch (InvalidCacheSizeStringFormat e) {
             e.printStackTrace();
         } catch (InvalidBlocksPerSetException e) {
@@ -135,6 +134,8 @@ public class CacheManager {
         } catch (InvalidPowerOfTwoException e) {
             e.printStackTrace();
         } catch (InvalidCacheSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidMappingSchemeException e) {
             e.printStackTrace();
         }
     }
@@ -145,19 +146,29 @@ public class CacheManager {
      * @param configs
      * @return
      */
-    private CacheLayer[] generateCacheLayers(CacheLayerConfig[] configs) throws InvalidBlocksPerSetException, InvalidCacheSizeException, InvalidPowerOfTwoException {
+    private CacheLayer[] generateCacheLayers(CacheLayerConfig[] configs) throws InvalidBlocksPerSetException, InvalidCacheSizeException, InvalidPowerOfTwoException, InvalidMappingSchemeException {
         CacheLayer[] caches = new CacheLayer[configs.length];
         // Only have Direct mapped cache available right now
         for (int i = 0; i < caches.length; i++) {
             CacheLayerConfig conf = configs[i];
-            switch (conf.ways) {
-                case 1:
+            switch (conf.mappingScheme) {
+                case "DIRECT":
                     caches[i] = new DirectMappedCacheLayer(conf.size, conf.blockSize, conf.accessTime, conf.strategy);
                     break;
-                case 0: // TODO implement full associativity
+                case "FULLY_ASSOCIATIVE": // TODO implement full associativity
                     break;
                 default:
-                    caches[i] = new SetAssociativeCacheLayer(conf.size, conf.blockSize, conf.ways, conf.accessTime, conf.strategy);
+                    String mappingScheme = conf.mappingScheme;
+                    if (!mappingScheme.contains("_WAY_SET_ASSOCIATIVE"))
+                        throw new InvalidMappingSchemeException();
+                    try {
+                        String wayString = mappingScheme.split("_")[0];
+
+                        int ways = Integer.parseInt(wayString);
+                        caches[i] = new SetAssociativeCacheLayer(conf.size, conf.blockSize, ways, conf.accessTime, conf.strategy);
+                    } catch (Exception e) {
+                        throw new InvalidMappingSchemeException();
+                    }
             }
         }
         return caches;
@@ -171,12 +182,12 @@ public class CacheManager {
      * @throws InvalidPowerOfTwoException
      * @throws InvalidCacheSizeException
      */
-    private void validateCacheLayerConfig(CacheLayerConfig conf) throws InvalidAccessTimeException, InvalidAssociativityException {
+    private void validateCacheLayerConfig(CacheLayerConfig conf) throws InvalidAccessTimeException, InvalidMappingSchemeException {
         if (conf.accessTime < 1) {
             throw new InvalidAccessTimeException();
         }
-        if (conf.ways < 0) {
-            throw new InvalidAssociativityException();
+        if (!conf.mappingScheme.equals("DIRECT") && !conf.mappingScheme.equals("FULLY_ASSOCIATIVE") && !conf.mappingScheme.contains("_WAY_SET_ASSOCIATIVE")) {
+            throw new InvalidMappingSchemeException();
         }
     }
 

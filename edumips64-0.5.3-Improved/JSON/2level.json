@@ -5,14 +5,14 @@
       "size" : "64KB",
       "blockSize" : "4KB",
       "accessTime" : 5,
-      "ways" : 8,
+      "mappingScheme" : "4_WAY_SET_ASSOCIATIVE",
       "writeStrategy" :  "WRITE_BACK"
     },
     {
       "size" : "128KB",
       "blockSize" : "16KB",
       "accessTime" : 15,
-      "ways" : 4,
+      "mappingScheme" : "DIRECT",
       "writeStrategy" :  "WRITE_THROUGH"
     }
   ]

@@ -5,7 +5,7 @@
       "size" : "128KB",
       "blockSize" : "16KB",
       "accessTime" : 3,
-      "ways" : 1,
+      "mappingScheme" : "DIRECT",
       "writeStrategy" :  "WRITE_BACK"
     }
   ]
