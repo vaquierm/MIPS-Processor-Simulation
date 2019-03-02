@@ -152,12 +152,13 @@ public class CacheManager {
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Write hit
-                    // TODO
+                    delay += layer.getAccessTime();
+                    CacheBlock cb = layer.put(address);
+                    cb.setDirty(false);
                 }
-                else {
-                    // Write miss
-                    // TODO
-                }
+
+                delay += writeToLayer(layerNumber + 1, address);
+
                 break;
         }
 
@@ -184,20 +185,28 @@ public class CacheManager {
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
+                    delay += layer.getAccessTime();
+
                 }
                 else {
                     // Read miss
+                    delay += readFromLayer(layerNumber + 1, address);
+                    CacheBlock cb = layer.put(address);
+                    if(cb.valid && cb.getDirty()) {
+                        delay += writeToLayer(layerNumber + 1, cb.baseAddress);
+                    }
                 }
+                
                 break;
             case WRITE_THROUGH:
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
-                    //TODO
+                    delay += layer.getAccessTime();
                 }
                 else {
                     // Read miss
-                    //TODO
+                    delay += readFromLayer(layerNumber + 1, address);
                 }
                 break;
         }
