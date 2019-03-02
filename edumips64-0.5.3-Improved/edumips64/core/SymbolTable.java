@@ -27,6 +27,7 @@ package edumips64.core;
 import java.util.*;
 import java.util.logging.Logger;
 
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.core.is.*;
 import edumips64.utils.*;
 import edumips64.core.MemoryElementNotFoundException;
@@ -57,7 +58,7 @@ import edumips64.core.MemoryElementNotFoundException;
 			if(mem_labels.containsKey(label))
 				throw new SameLabelsException();
 			mem_labels.put(label, address);
-			MemoryElement temp = mem.getCell(address);
+			MemoryElement temp = mem.getCell(address, ICacheLayer.MemoryAccessType.NONE);
 			// TODO: attualmente la cella  si prende l'ultima etichetta
 			temp.setLabel(label);
 			logger.info("Added label " + label + " to address " + address);
@@ -81,7 +82,7 @@ import edumips64.core.MemoryElementNotFoundException;
 
 		int address = mem_labels.get(label);
 		logger.info("Label found at address " + address);
-		return mem.getCell(address);
+		return mem.getCell(address, ICacheLayer.MemoryAccessType.NONE);
 	}
     
     /** Singleton pattern: This method returns the unique instance of SymbolTable.

@@ -22,6 +22,8 @@
  */
 
 package edumips64.core;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
+
 import java.util.*;
 import java.io.*;
 import java.util.logging.Logger;
@@ -204,7 +206,7 @@ public class IOManager {
 				if(i % 8 == 0) {
 					posInWord = 0;
 					logger.info("write(): getting a new cell at address " + address);
-					memEl = Memory.getInstance().getCell((int)address);
+					memEl = Memory.getInstance().getCell((int)address, ICacheLayer.MemoryAccessType.WRITE);
 					address += 8;
 				}
 				byte rb = (byte)memEl.readByte(posInWord++);
@@ -270,7 +272,7 @@ public class IOManager {
 				if(i % 8 == 0) {
 					posInWord = 0;
 					logger.info("read(): getting a new cell at address " + address);
-					memEl = Memory.getInstance().getCell((int)address);
+					memEl = Memory.getInstance().getCell((int)address, ICacheLayer.MemoryAccessType.WRITE);
 					address += 8;
 				}
 
