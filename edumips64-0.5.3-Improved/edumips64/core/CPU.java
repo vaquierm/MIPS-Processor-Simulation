@@ -204,6 +204,14 @@ public class CPU
 		return memoryStalls;
 	}
 
+	/**
+	 * Add some stalls to the memory stall count when there is a cache miss
+	 * @param stalls  Number of stalls to add
+	 */
+	public void addMemoryStalls(int stalls) {
+		memoryStalls += stalls;
+	}
+
     /** This method performs a single pipeline step
     * @throw RAWHazardException when a RAW hazard is detected
     */

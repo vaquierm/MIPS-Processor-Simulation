@@ -93,6 +93,7 @@ public class Memory{
 	/** Returns the MemoryElement at given address.
 	 * Please note that an index is not an address, for addresses must be aligned to 8 byte and indexes do not.
 	 * @param address address of the requested element
+	 * @param accessType access type to the memory. Read or write. (NONE will just not add any delay)
 	 * @return MemoryElement with address equals to index*8
 	 * @throws MemoryElementNotFoundException if given index is too large for this memory.
 	 */
@@ -103,7 +104,11 @@ public class Memory{
 			throw new MemoryElementNotFoundException();
 
 		try {
+			// Calculate the delay of the memory access.
 			int delay = CacheManager.getInstance().calculateLatency(address, accessType);
+
+			// Add the number of stalls to get the cell
+			CPU.getInstance().addMemoryStalls(delay);
 		}
 		catch (Exception e) {
 			System.err.println("Something went wrong while calculating the cache delay for address " + address);
@@ -153,6 +158,7 @@ public class Memory{
 	}
 
 	public Instruction getInstruction(int address) {
+		// This method does not need to calculate the cache delay because it is only called by the UI for display purposes
 		return instructions.get(address / 4);
 	}
 
@@ -161,6 +167,21 @@ public class Memory{
 	*   @param address a BitSet64 object holding the address of the Instruction
     */
     public Instruction getInstruction(BitSet64 address) throws HaltException, IrregularStringOfBitsException {
+
+    	// TODO: Make sure that this isnt missing all the time the address here is kind of weird. Consecutive instructions should always be a hit (Unless data operations that kick out block)
+		try {
+			// Calculate the delay of the memory access. (Memory accesses for instruction fetch are always READ)
+			int delay = CacheManager.getInstance().calculateLatency((int)(Converter.binToLong(address.getBinString(), false)), MemoryAccessType.READ);
+
+			// Add the number of stalls to get the cell
+			CPU.getInstance().addMemoryStalls(delay);
+		}
+		catch (Exception e) {
+			System.err.println("Something went wrong while calculating the cache delay for address " + address);
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+
 		try {
         	return instructions.get((int)(Converter.binToLong(address.getBinString(), false)/4));
 		}
