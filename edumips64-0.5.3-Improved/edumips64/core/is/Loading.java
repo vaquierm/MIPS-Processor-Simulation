@@ -26,6 +26,7 @@
 package edumips64.core.is;
 
 import edumips64.core.*;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.utils.*;
 
 /** This is the base class for loading instruction
@@ -84,7 +85,7 @@ public abstract class Loading extends LDSTInstructions{
 			inst.params.add(0); //base
 			//R1=43524464456523452L
 			int address=(inst.params.get(BASE_FIELD)+inst.params.get(OFFSET_FIELD));
-			MemoryElement me= memory.getCell(address);
+			MemoryElement me= memory.getCell(address, ICacheLayer.MemoryAccessType.READ);
 			me.writeDoubleWord(12341234214312L);
 			//me.setBits("01010101",56);
 			inst.pack();
