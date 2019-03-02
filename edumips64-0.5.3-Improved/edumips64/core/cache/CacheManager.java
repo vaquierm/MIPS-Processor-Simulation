@@ -2,8 +2,23 @@ package edumips64.core.cache;
 
 import edumips64.core.cache.cacheExceptions.BlockNotFoundException;
 import edumips64.core.cache.cacheExceptions.CacheAlreadyContainsBlockException;
+import edumips64.core.cache.cacheExceptions.InvalidCacheSizeException;
+import edumips64.core.cache.cacheExceptions.InvalidPowerOfTwoException;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.core.cache.cacheLayer.ICache.ICacheLayer.MemoryAccessType;
 import edumips64.core.cache.cacheLayer.CacheLayer;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileReader;
+import java.security.InvalidParameterException;
+
+import static java.lang.Math.toIntExact;
+
 
 /**
  * Manages the memory hierarchy. Main interface the that the Memory goes through.
@@ -55,15 +70,104 @@ public class CacheManager {
         return this.cacheLayers;
     }
 
+
+    /**
+     * Mini class to hold the configurations of each layer
+     */
+    class CacheLayerConfig {
+        int accessTime;
+        int ways;
+        int size;
+        int blockSize;
+        ICacheLayer.WriteStrategy strat;
+    }
     /**
      * Sets up the cache layers based on a config file
      * @param configFile  config file filepath
      */
     public void setup(String configFile) {
+        int mainMemAT;
+        CacheLayerConfig[] layerConfigs;
 
-        // TODO : Parse the file and create the layers
-        // Do this in a encoder decoder file
-        // Throw exception if file not found
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject conf = (JSONObject)parser.parse(new FileReader(configFile));
+
+            mainMemAT = toIntExact((long) conf.get("mmat"));
+
+            JSONArray caches = (JSONArray) conf.get("caches");
+            layerConfigs = new CacheLayerConfig[caches.size()];
+            for (int i =0; i< layerConfigs.length; i++) {
+                JSONObject cache = (JSONObject) caches.get(i);
+                CacheLayerConfig layerConfig = new CacheLayerConfig();
+                layerConfig.accessTime = toIntExact((long) cache.get("accessTime"));
+                layerConfig.ways = toIntExact((long) cache.get("ways"));
+                layerConfig.size = byteValueFromString((String) cache.get("size"));
+                layerConfig.blockSize = byteValueFromString((String) cache.get("blockSize"));
+                layerConfig.strat = ICacheLayer.WriteStrategy.valueOf((String) cache.get("writeStrategy"));
+
+                validateCacheLayerConfig(layerConfig);
+
+                layerConfigs[i] = layerConfig;
+            }
+        }
+        catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        catch (org.json.simple.parser.ParseException e) {
+            e.printStackTrace();
+        }
+        catch (InvalidPowerOfTwoException e) {
+            e.printStackTrace();
+        }
+        catch (InvalidCacheSizeException e) {
+            e.printStackTrace();
+        }
+    }
+    private boolean isPowerofTwo (int i){
+        if (i <=0 ) return false;
+        while (i > 1) {
+            if (i % 2 != 0) {
+                return false;
+            }
+            i /=2;
+        }
+        return true;
+    }
+    private void validateCacheLayerConfig(CacheLayerConfig conf) throws InvalidPowerOfTwoException, InvalidCacheSizeException {
+        if (!isPowerofTwo(conf.size)){
+            throw new InvalidPowerOfTwoException();
+        }
+        if (!isPowerofTwo(conf.blockSize)){
+            throw new InvalidPowerOfTwoException();
+        }
+        if (conf.size % conf.blockSize != 0) {
+            throw new InvalidCacheSizeException();
+        }
+        if (conf.accessTime <1) {
+
+        }
+        if (conf.ways < 0) {
+
+        }
+    }
+
+    private int byteValueFromString(String size){
+        if (size.contains("B")) {
+            int index = size.indexOf('B');
+            switch (size.charAt(index-1)){
+                case 'K': return Integer.parseInt(size.substring(0, index -1)) * 1024;
+                case 'M': return Integer.parseInt(size.substring(0, index -1)) * 1024 * 1024;
+                default: return Integer.parseInt(size.substring(0,index-1));
+            }
+        }
+        else {
+            // TODO throw exception if not proper format
+        }
+        return 0;
     }
 
     /**
