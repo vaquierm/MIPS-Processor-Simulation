@@ -128,14 +128,7 @@ public class CacheManager {
         }
     }
     private boolean isPowerofTwo (int i){
-        if (i <=0 ) return false;
-        while (i > 1) {
-            if (i % 2 != 0) {
-                return false;
-            }
-            i /=2;
-        }
-        return true;
+       return (i >0) && (i & i-1)==0;
     }
     private void validateCacheLayerConfig(CacheLayerConfig conf) throws InvalidPowerOfTwoException, InvalidCacheSizeException {
         if (!isPowerofTwo(conf.size)){
