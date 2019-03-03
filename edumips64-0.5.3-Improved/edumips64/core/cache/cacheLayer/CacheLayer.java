@@ -44,7 +44,7 @@ public abstract class CacheLayer implements ICacheLayer {
         this.cacheSize = cacheSize;
         this.blockSize = blockSize;
 
-        if (this.cacheSize % this.blockSize == 0) {
+        if (this.cacheSize % this.blockSize != 0) {
             throw new InvalidCacheSizeException();
         }
 

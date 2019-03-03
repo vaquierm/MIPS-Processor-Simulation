@@ -64,7 +64,7 @@ public class SetAssociativeCacheLayer extends CacheLayer {
         // Create the block index mask
         int mask = 0;
         for (int i = 0; i < this.setIndexBits; i++) {
-            mask = (mask++) << 1;
+            mask = (mask + 1) << 1;
         }
         mask = mask << this.offsetBits;
         this.setIndexMask = mask;
