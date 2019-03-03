@@ -398,7 +398,7 @@ public class Main extends JApplet {
             log.info("CPU Halted");
             setCacheMenuItemsStatus(true);
             setRunningMenuItemsStatus(false);
-            cache.setEnabled(false);
+            cache.setEnabled(true);
         }
     }
 
