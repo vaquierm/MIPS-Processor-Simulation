@@ -10,13 +10,13 @@ import edumips64.core.cache.cacheLayer.SetAssociativeCacheLayer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.FileReader;
 
 import static java.lang.Math.toIntExact;
+import static javax.swing.JOptionPane.*;
 
 
 /**
@@ -93,6 +93,7 @@ public class CacheManager {
         CacheLayerConfig[] layerConfigs;
 
         JSONParser parser = new JSONParser();
+
         try {
             JSONObject conf = (JSONObject) parser.parse(new FileReader(configFile));
 
@@ -120,24 +121,25 @@ public class CacheManager {
 
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            showMessageDialog(null, e.getMessage(), "FileNotFoundException", INFORMATION_MESSAGE);
         } catch (IOException e) {
-            e.printStackTrace();
+            showMessageDialog(null, e.getMessage(), "IOException", INFORMATION_MESSAGE);
         } catch (org.json.simple.parser.ParseException e) {
-            e.printStackTrace();
+            showMessageDialog(null, e.getMessage(), "ParseException", INFORMATION_MESSAGE);
         } catch (InvalidAccessTimeException e) {
-            e.printStackTrace();
-        } catch (InvalidCacheSizeStringFormat e) {
-            e.printStackTrace();
+            showMessageDialog(null, e.getMessage(), "InvalidAccessTimeException", INFORMATION_MESSAGE);
+        } catch (InvalidCacheSizeStringFormatException e) {
+            showMessageDialog(null, e.getMessage(), "InvalidCacheSizeStringFormatException", INFORMATION_MESSAGE);
         } catch (InvalidBlocksPerSetException e) {
-            e.printStackTrace();
+            showMessageDialog(null, e.getMessage(), "InvalidBlocksPerSetException", INFORMATION_MESSAGE);
         } catch (InvalidPowerOfTwoException e) {
-            e.printStackTrace();
+            showMessageDialog(null, e.getMessage(), "InvalidPowerOfTwoException", INFORMATION_MESSAGE);
         } catch (InvalidCacheSizeException e) {
-            e.printStackTrace();
+            showMessageDialog(null, e.getMessage(), "InvalidCacheSizeException", INFORMATION_MESSAGE);
         } catch (InvalidMappingSchemeException e) {
-            e.printStackTrace();
+            showMessageDialog(null, e.getMessage(), "InvalidMappingSchemeException", INFORMATION_MESSAGE);
         }
+
     }
 
     /**
@@ -196,7 +198,7 @@ public class CacheManager {
      *
      * @param size
      */
-    private int byteValueFromString(String size) throws InvalidCacheSizeStringFormat {
+    private int byteValueFromString(String size) throws InvalidCacheSizeStringFormatException {
         if (size.contains("B")) {
             int index = size.indexOf('B');
             switch (size.charAt(index - 1)) {
@@ -210,7 +212,7 @@ public class CacheManager {
                     return Integer.parseInt(size.substring(0, index - 1));
             }
         } else {
-            throw new InvalidCacheSizeStringFormat();
+            throw new InvalidCacheSizeStringFormatException();
         }
     }
 
