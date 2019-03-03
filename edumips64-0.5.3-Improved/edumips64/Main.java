@@ -63,7 +63,7 @@ public class Main extends JApplet {
     static Config cfg;
 
     static JFrame f=null;
-    private static JMenuItem open, softReset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop, load_JSON, hardReset;
+    private static JMenuItem open, softReset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop, load_JSON, hardReset, clearCacheConfig;
     private static StatusBar sb;
     private static JMenu file, lastfiles, exec, config, window, help, lang, tools, cache;
     private static JCheckBoxMenuItem lang_en,lang_it, pipeFrameMI, codeFrameMI;
@@ -586,7 +586,7 @@ public class Main extends JApplet {
         setMenuItem(ioJCB, "IO");
         setGenericMenuItem(cache, "Cache Config");
         setGenericMenuItem(hardReset, "Hard Reset");
-
+        setGenericMenuItem(clearCacheConfig, "Clear Cache Configuration");
     }
 
     public static boolean isWindows() {
@@ -850,6 +850,15 @@ public class Main extends JApplet {
                     CacheManager.getInstance().setup(filePath);
                 }
                 jfc.resetChoosableFileFilters();
+            }
+        });
+
+        clearCacheConfig = new JMenuItem("Clear Cache Configuration");
+        cache.add(clearCacheConfig);
+        clearCacheConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CacheManager.getInstance().reset();
             }
         });
 
