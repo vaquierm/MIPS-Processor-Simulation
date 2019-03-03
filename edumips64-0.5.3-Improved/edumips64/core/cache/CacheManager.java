@@ -119,6 +119,8 @@ public class CacheManager {
             INSTANCE.cacheLayers = generateCacheLayers(layerConfigs);
             INSTANCE.mainMemoryAccessTime = mainMemAT;
 
+            showMessageDialog(null, configFile + "has been loaded correctly.", "Cache Load JSON", INFORMATION_MESSAGE);
+
 
         } catch (FileNotFoundException e) {
             showMessageDialog(null, e.getMessage(), "FileNotFoundException", INFORMATION_MESSAGE);

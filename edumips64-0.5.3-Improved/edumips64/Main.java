@@ -859,6 +859,7 @@ public class Main extends JApplet {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CacheManager.getInstance().reset();
+                JOptionPane.showMessageDialog(null, "The cache configuration has been reset correctly", "Cache Reset Configuration", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
