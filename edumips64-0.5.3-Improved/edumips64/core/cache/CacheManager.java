@@ -71,6 +71,18 @@ public class CacheManager {
         return this.cacheLayers;
     }
 
+    /**
+     * Whether or not cache has been configured yet.
+     */
+    private boolean configured = false;
+
+    /**
+     * Getter for whether or not instance has been congigured
+     * @return configured
+     */
+    public boolean getConfigured(){
+        return this.configured;
+    }
 
     /**
      * Mini class to hold the configurations of each layer
@@ -116,11 +128,9 @@ public class CacheManager {
 
             }
             // Set the configuration values
-            INSTANCE.cacheLayers = generateCacheLayers(layerConfigs);
-            INSTANCE.mainMemoryAccessTime = mainMemAT;
-
-            showMessageDialog(null, configFile + "has been loaded correctly.", "Cache Load JSON", INFORMATION_MESSAGE);
-
+            this.cacheLayers = generateCacheLayers(layerConfigs);
+            this.mainMemoryAccessTime = mainMemAT;
+            this.configured = true;
 
         } catch (FileNotFoundException e) {
             showMessageDialog(null, e.getMessage(), "FileNotFoundException", INFORMATION_MESSAGE);
@@ -224,6 +234,7 @@ public class CacheManager {
     public void reset() {
         this.mainMemoryAccessTime = 0;
         this.cacheLayers = new CacheLayer[0];
+        this.configured = false;
     }
 
     public int getMainMemoryAccessTime() {
