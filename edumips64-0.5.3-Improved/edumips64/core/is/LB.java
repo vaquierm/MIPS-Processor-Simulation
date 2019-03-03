@@ -25,6 +25,7 @@
 
 package edumips64.core.is;
 import edumips64.core.*;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.utils.*;
 
 
@@ -52,7 +53,7 @@ class LB extends Loading
         //For the trace file
         Dinero din=Dinero.getInstance();
         din.Load(Converter.binToHex(Converter.positiveIntToBin(64,address)),1);
-        MemoryElement memEl = memory.getCell((int)address);
+        MemoryElement memEl = memory.getCell((int)address, ICacheLayer.MemoryAccessType.READ);
         //reading from the memory element and saving values on LMD register
         TR[LMD_REGISTER].writeByte(memEl.readByte((int)(address%8)));
 	if(enableForwarding)

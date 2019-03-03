@@ -18,7 +18,10 @@ public class Log2 {
             return result;
 
         while (true) {
+
             int bit = x & 1;
+
+            x >>>= 1;
 
             result++;
 
@@ -26,7 +29,7 @@ public class Log2 {
                 if (x != 0)
                     return -1;
 
-                return  result;
+                return  result - 1;
             }
 
             if (result > 32)

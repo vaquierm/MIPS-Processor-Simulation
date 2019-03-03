@@ -63,6 +63,10 @@ public interface ICacheLayer {
         /**
          * Write access
          */
-        WRITE
+        WRITE,
+        /**
+         * This is for when the we do not want to calculate the delay
+         */
+        NONE
     }
 }

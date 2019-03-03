@@ -1,9 +1,23 @@
 package edumips64.core.cache;
 
-import edumips64.core.cache.cacheExceptions.BlockNotFoundException;
-import edumips64.core.cache.cacheExceptions.CacheAlreadyContainsBlockException;
+import edumips64.core.cache.cacheExceptions.*;
+import edumips64.core.cache.cacheLayer.DirectMappedCacheLayer;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.core.cache.cacheLayer.ICache.ICacheLayer.MemoryAccessType;
 import edumips64.core.cache.cacheLayer.CacheLayer;
+
+import edumips64.core.cache.cacheLayer.SetAssociativeCacheLayer;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileReader;
+
+import static java.lang.Math.toIntExact;
+import static javax.swing.JOptionPane.*;
+
 
 /**
  * Manages the memory hierarchy. Main interface the that the Memory goes through.
@@ -34,7 +48,8 @@ public class CacheManager {
 
     /**
      * Create the cache layers based on a config file
-     * @param configFile  config file filepath
+     *
+     * @param configFile config file filepath
      */
     private CacheManager(String configFile) {
         setup(configFile);
@@ -42,6 +57,7 @@ public class CacheManager {
 
     /**
      * Note, if it is the first time that get instance is called, you need to set it up bu calling .setup(filepath)
+     *
      * @return The CacheManager Instance
      */
     public static CacheManager getInstance() {
@@ -55,15 +71,151 @@ public class CacheManager {
         return this.cacheLayers;
     }
 
+
+    /**
+     * Mini class to hold the configurations of each layer
+     */
+    class CacheLayerConfig {
+        int accessTime;
+        String mappingScheme;
+        int size;
+        int blockSize;
+        ICacheLayer.WriteStrategy strategy;
+    }
+
     /**
      * Sets up the cache layers based on a config file
-     * @param configFile  config file filepath
+     *
+     * @param configFile config file filepath
      */
     public void setup(String configFile) {
+        int mainMemAT;
+        CacheLayerConfig[] layerConfigs;
 
-        // TODO : Parse the file and create the layers
-        // Do this in a encoder decoder file
-        // Throw exception if file not found
+        JSONParser parser = new JSONParser();
+
+        try {
+            JSONObject conf = (JSONObject) parser.parse(new FileReader(configFile));
+
+            mainMemAT = toIntExact((long) conf.get("mmat"));
+
+            JSONArray caches = (JSONArray) conf.get("caches");
+            layerConfigs = new CacheLayerConfig[caches.size()];
+            for (int i = 0; i < layerConfigs.length; i++) {
+                JSONObject cache = (JSONObject) caches.get(i);
+                CacheLayerConfig layerConfig = new CacheLayerConfig();
+                layerConfig.accessTime = toIntExact((long) cache.get("accessTime"));
+                layerConfig.mappingScheme = (String) cache.get("mappingScheme");
+                layerConfig.size = byteValueFromString((String) cache.get("size"));
+                layerConfig.blockSize = byteValueFromString((String) cache.get("blockSize"));
+                layerConfig.strategy = ICacheLayer.WriteStrategy.valueOf((String) cache.get("writeStrategy"));
+
+                validateCacheLayerConfig(layerConfig);
+
+                layerConfigs[i] = layerConfig;
+
+            }
+            // Set the configuration values
+            INSTANCE.cacheLayers = generateCacheLayers(layerConfigs);
+            INSTANCE.mainMemoryAccessTime = mainMemAT;
+
+            showMessageDialog(null, configFile + "has been loaded correctly.", "Cache Load JSON", INFORMATION_MESSAGE);
+
+
+        } catch (FileNotFoundException e) {
+            showMessageDialog(null, e.getMessage(), "FileNotFoundException", INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            showMessageDialog(null, e.getMessage(), "IOException", INFORMATION_MESSAGE);
+        } catch (org.json.simple.parser.ParseException e) {
+            showMessageDialog(null, e.getMessage(), "ParseException", INFORMATION_MESSAGE);
+        } catch (InvalidAccessTimeException e) {
+            showMessageDialog(null, e.getMessage(), "InvalidAccessTimeException", INFORMATION_MESSAGE);
+        } catch (InvalidCacheSizeStringFormatException e) {
+            showMessageDialog(null, e.getMessage(), "InvalidCacheSizeStringFormatException", INFORMATION_MESSAGE);
+        } catch (InvalidBlocksPerSetException e) {
+            showMessageDialog(null, e.getMessage(), "InvalidBlocksPerSetException", INFORMATION_MESSAGE);
+        } catch (InvalidPowerOfTwoException e) {
+            showMessageDialog(null, e.getMessage(), "InvalidPowerOfTwoException", INFORMATION_MESSAGE);
+        } catch (InvalidCacheSizeException e) {
+            showMessageDialog(null, e.getMessage(), "InvalidCacheSizeException", INFORMATION_MESSAGE);
+        } catch (InvalidMappingSchemeException e) {
+            showMessageDialog(null, e.getMessage(), "InvalidMappingSchemeException", INFORMATION_MESSAGE);
+        }
+
+    }
+
+    /**
+     * Generates cache layers from given configurations
+     *
+     * @param configs
+     * @return
+     */
+    private CacheLayer[] generateCacheLayers(CacheLayerConfig[] configs) throws InvalidBlocksPerSetException, InvalidCacheSizeException, InvalidPowerOfTwoException, InvalidMappingSchemeException {
+        CacheLayer[] caches = new CacheLayer[configs.length];
+        // Only have Direct mapped cache available right now
+        for (int i = 0; i < caches.length; i++) {
+            CacheLayerConfig conf = configs[i];
+            switch (conf.mappingScheme) {
+                case "DIRECT":
+                    caches[i] = new DirectMappedCacheLayer(conf.size, conf.blockSize, conf.accessTime, conf.strategy);
+                    break;
+                case "FULLY_ASSOCIATIVE": // TODO implement full associativity
+                    break;
+                default:
+                    String mappingScheme = conf.mappingScheme;
+                    if (!mappingScheme.contains("_WAY_SET_ASSOCIATIVE"))
+                        throw new InvalidMappingSchemeException();
+                    try {
+                        String wayString = mappingScheme.split("_")[0];
+
+                        int ways = Integer.parseInt(wayString);
+                        caches[i] = new SetAssociativeCacheLayer(conf.size, conf.blockSize, ways, conf.accessTime, conf.strategy);
+                    } catch (Exception e) {
+                        throw new InvalidMappingSchemeException();
+                    }
+            }
+        }
+        return caches;
+    }
+
+    /**
+     * Validates a given cache layer configuration
+     *
+     * @param conf the configuration of a given cache layer
+     * @return if cache layer is valid or not
+     * @throws InvalidPowerOfTwoException
+     * @throws InvalidCacheSizeException
+     */
+    private void validateCacheLayerConfig(CacheLayerConfig conf) throws InvalidAccessTimeException, InvalidMappingSchemeException {
+        if (conf.accessTime < 1) {
+            throw new InvalidAccessTimeException();
+        }
+        if (!conf.mappingScheme.equals("DIRECT") && !conf.mappingScheme.equals("FULLY_ASSOCIATIVE") && !conf.mappingScheme.contains("_WAY_SET_ASSOCIATIVE")) {
+            throw new InvalidMappingSchemeException();
+        }
+    }
+
+    /**
+     * Converts strings of format XXB,XXKB,XXMB to an int byte count, throws if string is improperly formatted
+     *
+     * @param size
+     */
+    private int byteValueFromString(String size) throws InvalidCacheSizeStringFormatException {
+        if (size.contains("B")) {
+            int index = size.indexOf('B');
+            switch (size.charAt(index - 1)) {
+                case 'K':
+                    return Integer.parseInt(size.substring(0, index - 1)) * 1024;
+                case 'M':
+                    return Integer.parseInt(size.substring(0, index - 1)) * 1024 * 1024;
+                case 'G':
+                    return Integer.parseInt(size.substring(0, index - 1)) * 1024 * 1024 * 1024;
+                default:
+                    return Integer.parseInt(size.substring(0, index - 1));
+            }
+        } else {
+            throw new InvalidCacheSizeStringFormatException();
+        }
     }
 
     /**
@@ -80,9 +232,10 @@ public class CacheManager {
 
     /**
      * Calculate the latency of the memory access
-     * @param address  Address of the memory access
-     * @param accessType  The type of access to memory
-     * @return  The latency of the access
+     *
+     * @param address    Address of the memory access
+     * @param accessType The type of access to memory
+     * @return The latency of the access
      */
     public int calculateLatency(int address, MemoryAccessType accessType) throws CacheAlreadyContainsBlockException, BlockNotFoundException {
 
@@ -108,9 +261,10 @@ public class CacheManager {
 
     /**
      * Calculate the memory latency to write to a particular cache
-     * @param layerNumber  Index of the cache to write to
-     * @param address  Address to write to
-     * @return  The latency of the access
+     *
+     * @param layerNumber Index of the cache to write to
+     * @param address     Address to write to
+     * @return The latency of the access
      */
     private int writeToLayer(int layerNumber, int address) throws CacheAlreadyContainsBlockException, BlockNotFoundException {
 
@@ -152,12 +306,13 @@ public class CacheManager {
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Write hit
-                    // TODO
+                    delay += layer.getAccessTime();
+                    CacheBlock cb = layer.put(address);
+                    cb.setDirty(false);
                 }
-                else {
-                    // Write miss
-                    // TODO
-                }
+
+                delay += writeToLayer(layerNumber + 1, address);
+
                 break;
         }
 
@@ -166,12 +321,12 @@ public class CacheManager {
 
     /**
      * Calculate the latency to read from a particular cache
-     * @param layerNumber  Index of the cache to read from
-     * @param address  Address to read from
-     * @return  The latency of the access
+     *
+     * @param layerNumber Index of the cache to read from
+     * @param address     Address to read from
+     * @return The latency of the access
      */
     private int readFromLayer(int layerNumber, int address) throws CacheAlreadyContainsBlockException, BlockNotFoundException {
-
         if (layerNumber < 0 || layerNumber >= cacheLayers.length)
             return mainMemoryAccessTime;
 
@@ -184,25 +339,34 @@ public class CacheManager {
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
+                    delay += layer.getAccessTime();
+
                 }
                 else {
                     // Read miss
+                    delay += readFromLayer(layerNumber + 1, address);
+                    CacheBlock cb = layer.put(address);
+                    if(cb.valid && cb.getDirty()) {
+                        delay += writeToLayer(layerNumber + 1, cb.baseAddress);
+                    }
                 }
+
                 break;
             case WRITE_THROUGH:
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
-                    //TODO
+                    delay += layer.getAccessTime();
                 }
                 else {
                     // Read miss
-                    //TODO
+                    delay += readFromLayer(layerNumber + 1, address);
                 }
                 break;
         }
 
         return delay;
+
     }
 
 

@@ -23,6 +23,7 @@
 package edumips64.ui;
 
 import edumips64.core.*;
+import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.utils.*;
 import java.awt.*;
 import java.util.*;
@@ -46,7 +47,7 @@ public class GUIData extends GUIComponent
 	public GUIData()
 	{
 		super();
-		memory = cpu.getMemory();        //INIT OGGETTO MEMORIA!!!!!!!!!!!!!!! ^_^ è qui, è proprio qui!!!! NdR!!
+		memory = cpu.getMemory();        //INIT OGGETTO MEMORIA!!!!!!!!!!!!!!! ^_^ ï¿½ qui, ï¿½ proprio qui!!!! NdR!!
 		dataPanel = new DataPanel();
 	}
 	
@@ -91,7 +92,7 @@ public class GUIData extends GUIComponent
 			theTable.getColumnModel().getColumn(3).setPreferredWidth(200);
 			theTable.getColumnModel().getColumn(4).setPreferredWidth(200);
         
-			//theTable.setTableHeader(null); //così visualizzo le intestazioni
+			//theTable.setTableHeader(null); //cosï¿½ visualizzo le intestazioni
 			theTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			theTable.setShowGrid(false);
 			Font f = new Font("Monospaced", Font.PLAIN, 12);
@@ -187,7 +188,7 @@ public class GUIData extends GUIComponent
 					case 0:
 						try 
 						{
-							long address = cpu.getMemory().getCell(row * 8).getAddress();
+							long address = cpu.getMemory().getCell(row * 8, ICacheLayer.MemoryAccessType.NONE).getAddress();
 							return Converter.binToHex(Converter.positiveIntToBin(16,address));
 						}
 						catch(IrregularStringOfBitsException ex) { }
@@ -195,26 +196,26 @@ public class GUIData extends GUIComponent
 					case 1:
 						try 
 						{
-							return cpu.getMemory().getCell(row * 8).getHexString();
+							return cpu.getMemory().getCell(row * 8, ICacheLayer.MemoryAccessType.NONE).getHexString();
 						}
 						catch(IrregularStringOfBitsException ex) { }
 						catch(MemoryElementNotFoundException ex) { }
 					case 2:
 						try 
 						{
-							return cpu.getMemory().getCell(row * 8).getLabel();
+							return cpu.getMemory().getCell(row * 8, ICacheLayer.MemoryAccessType.NONE).getLabel();
 						}
 						catch(MemoryElementNotFoundException ex) { }
 					case 3:
 						try  
 						{
-							return cpu.getMemory().getCell(row * 8).getCode();
+							return cpu.getMemory().getCell(row * 8, ICacheLayer.MemoryAccessType.NONE).getCode();
 						}
 						catch(MemoryElementNotFoundException ex) { }
 					case 4:
 						try 
 						{
-							return cpu.getMemory().getCell(row * 8).getComment();
+							return cpu.getMemory().getCell(row * 8, ICacheLayer.MemoryAccessType.NONE).getComment();
 						}
 						catch(MemoryElementNotFoundException ex) { }
 					default:
@@ -320,7 +321,7 @@ public class GUIData extends GUIComponent
 						String hexAddress = (String) tableModel.getValueAt(row,0);
 						String binAddress = Converter.hexToBin(hexAddress);
 						int index = Converter.binToInt(binAddress,true);
-						memoryElement = memory.getCell(index);
+						memoryElement = memory.getCell(index, ICacheLayer.MemoryAccessType.NONE);
 						memoryElement.setBits(Converter.hexToBin(banana),0);
 					}
 					catch (Exception e)
@@ -337,7 +338,7 @@ public class GUIData extends GUIComponent
 						String hexAddress = (String) tableModel.getValueAt(row,0);
 						String binAddress = Converter.hexToBin(hexAddress);
 						int index = Converter.binToInt(binAddress,true);
-						memoryElement = memory.getCell(index);
+						memoryElement = memory.getCell(index, ICacheLayer.MemoryAccessType.NONE);
 						memoryElement.setBits(Converter.hexToBin(banana),0);
 					}
 					catch (Exception e)
