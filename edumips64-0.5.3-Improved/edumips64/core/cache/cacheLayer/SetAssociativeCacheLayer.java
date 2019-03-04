@@ -126,4 +126,13 @@ public class SetAssociativeCacheLayer extends CacheLayer {
     public int computeTag(int address) {
         return address >>> (this.offsetBits + this.setIndexBits);
     }
+
+    @Override
+    public void reset() {
+        for (int i = 0; i < this.numberOfSets; i ++) {
+            for (int j = 0; j < this. numberOfBlocksPerSet; j++) {
+                this.setsArray[i][j] = new CacheBlock();
+            }
+        }
+    }
 }

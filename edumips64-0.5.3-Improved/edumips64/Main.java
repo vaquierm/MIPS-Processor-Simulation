@@ -27,6 +27,7 @@ import edumips64.ui.*;
 import edumips64.img.*;
 import edumips64.utils.*;
 import edumips64.core.*;
+import sun.misc.Cache;
 import utils.JsonWriter;
 
 import java.awt.*;
@@ -410,6 +411,8 @@ public class Main extends JApplet {
         log.info("Trying to open " + file);
         cpu.reset();
 
+        CacheManager.getInstance().setEnabled(false);
+
         try {
             // Aggiorniamo i componenti gai
             front.updateComponents();
@@ -474,6 +477,9 @@ public class Main extends JApplet {
             log.info("Error opening " + file);
             new ReportDialog(f,e,CurrentLocale.getString("ERROR"));
         }
+
+        CacheManager.getInstance().setEnabled(true);
+
     }
 
     /** Tiles windows. */
@@ -867,7 +873,7 @@ public class Main extends JApplet {
         clearCacheConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CacheManager.getInstance().reset();
+                CacheManager.getInstance().resetDefault();
                 if(!CacheManager.getInstance().getConfigured()) {
                     JOptionPane.showMessageDialog(null, "The cache configuration has been reset correctly", "Cache Configuration Reset", JOptionPane.INFORMATION_MESSAGE);
                     clearCacheConfig.setEnabled(false);

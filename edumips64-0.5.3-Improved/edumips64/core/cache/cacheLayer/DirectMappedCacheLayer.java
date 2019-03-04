@@ -101,4 +101,11 @@ public class DirectMappedCacheLayer extends CacheLayer {
         return address >>> (this.offsetBits + this.blockIndexBits);
     }
 
+    @Override
+    public void reset() {
+        for (int i = 0; i < this.numberOfBlocks; i++) {
+            this.blocksArray[i] = new CacheBlock();
+        }
+    }
+
 }

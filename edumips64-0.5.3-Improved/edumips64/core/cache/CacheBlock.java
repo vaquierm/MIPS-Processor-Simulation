@@ -60,7 +60,7 @@ public class CacheBlock {
         this.numBitsOffset = 0;
         this.numBitsIndex = 0;
         this.baseAddress = 0;
-        this.tag = 0;
+        this.tag = -1;
     }
 
     /**

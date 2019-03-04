@@ -25,6 +25,8 @@ package edumips64.core;
 
 import java.util.*;
 import java.util.logging.Logger;
+
+import edumips64.core.cache.CacheManager;
 import edumips64.core.is.*;
 import edumips64.utils.*;
 
@@ -421,6 +423,8 @@ public class CPU
 
 		// Reset tracefile
 		Dinero.getInstance().reset();
+
+		CacheManager.getInstance().reset();
 
 		logger.info("CPU Resetted");
     }

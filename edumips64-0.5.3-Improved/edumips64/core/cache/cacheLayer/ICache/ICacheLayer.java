@@ -36,6 +36,11 @@ public interface ICacheLayer {
     int computeTag(int address);
 
     /**
+     * Reset the cache to an empty state
+     */
+    void reset();
+
+    /**
      * The Cache write strategies
      */
     enum WriteStrategy {

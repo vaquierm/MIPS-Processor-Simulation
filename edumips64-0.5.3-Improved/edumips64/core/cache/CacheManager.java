@@ -27,7 +27,7 @@ public class CacheManager {
     /**
      * Instance
      */
-    public static CacheManager INSTANCE;
+    private static CacheManager INSTANCE;
 
     /**
      * Access time of the main memory
@@ -40,10 +40,15 @@ public class CacheManager {
     private CacheLayer[] cacheLayers;
 
     /**
+     * If not enabled all memory accesses have a delay of 0
+     */
+    private boolean enabled;
+
+    /**
      * Create an empty cache with no access time to main memory
      */
     private CacheManager() {
-        reset();
+        resetDefault();
     }
 
     /**
@@ -242,10 +247,18 @@ public class CacheManager {
     /**
      * Resets the cache to default with no caches and 0CC of access time to main memory
      */
-    public void reset() {
+    public void resetDefault() {
         this.mainMemoryAccessTime = 0;
         this.cacheLayers = new CacheLayer[0];
         this.configured = false;
+        this.enabled = true;
+    }
+
+    /**
+     * Empties all caches and reset
+     */
+    public void reset() {
+
     }
 
     public int getMainMemoryAccessTime() {
@@ -262,6 +275,9 @@ public class CacheManager {
     public int calculateLatency(int address, MemoryAccessType accessType) throws CacheAlreadyContainsBlockException, BlockNotFoundException {
 
         int delay = 0;
+
+        if (!enabled)
+            return 0;
 
         try {
             switch (accessType) {
@@ -328,14 +344,21 @@ public class CacheManager {
                 break;
             case WRITE_THROUGH:
                 // Check if hit or miss
+
+                // Take into account the time it takes to check if the block is in this layer
+                delay += layer.getAccessTime();
+
+                //If the block is contained, write it
                 if (layer.contains(address)) {
                     // Write hit
                     layer.hits += 1;
-                    delay += layer.getAccessTime();
-                    CacheBlock cb = layer.put(address);
-                    cb.setDirty(false);
+
+                    // The evicted block is never dirsty so there is no need to write it back
+                    layer.put(address);
+
                 }
 
+                // In both cases, write the block to the lower layer
                 delay += writeToLayer(layerNumber + 1, address);
 
                 break;
@@ -370,8 +393,16 @@ public class CacheManager {
                 }
                 else {
                     // Read miss
+                    // Access the layer even if it is a miss
+                    delay += layer.getAccessTime();
+
+                    // Get the block from the lower layer
                     delay += readFromLayer(layerNumber + 1, address);
+
+                    // Put the block in this layer
                     CacheBlock cb = layer.put(address);
+
+                    // If the evicted block is dirty, write it back to lower layer
                     if(cb.valid && cb.getDirty()) {
                         delay += writeToLayer(layerNumber + 1, cb.baseAddress);
                     }
@@ -379,15 +410,23 @@ public class CacheManager {
 
                 break;
             case WRITE_THROUGH:
+
+                //Time to check if hit or miss
+                delay += layer.getAccessTime();
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
                     layer.hits += 1;
-                    delay += layer.getAccessTime();
+
                 }
                 else {
                     // Read miss
                     delay += readFromLayer(layerNumber + 1, address);
+
+                    // Get the block from lower layers
+                    layer.put(address);
+
+                    // The evicted block is always clean
                 }
                 break;
         }
@@ -396,5 +435,7 @@ public class CacheManager {
 
     }
 
-
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }
