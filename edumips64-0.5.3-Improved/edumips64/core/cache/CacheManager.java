@@ -51,8 +51,8 @@ public class CacheManager {
      *
      * @param configFile config file filepath
      */
-    private CacheManager(String configFile) {
-        setup(configFile);
+    private CacheManager(String filename, String configFile) {
+        setup(filename, configFile);
     }
 
     /**
@@ -71,6 +71,29 @@ public class CacheManager {
         return this.cacheLayers;
     }
 
+    /**
+     * Whether or not cache has been configured yet.
+     */
+    private boolean configured = false;
+
+    /**
+     * Getter for whether or not instance has been congigured
+     * @return configured
+     */
+    public boolean getConfigured(){
+        return this.configured;
+    }
+
+    /**
+     * Name for the configuration, from filename
+     */
+    private String configName;
+
+    /**
+     * getter for configName
+     * @return configName
+     */
+    public String getConfigName() {return configName;}
 
     /**
      * Mini class to hold the configurations of each layer
@@ -88,10 +111,9 @@ public class CacheManager {
      *
      * @param configFile config file filepath
      */
-    public void setup(String configFile) {
+    public void setup(String fileName, String configFile) {
         int mainMemAT;
         CacheLayerConfig[] layerConfigs;
-
         JSONParser parser = new JSONParser();
 
         try {
@@ -116,11 +138,10 @@ public class CacheManager {
 
             }
             // Set the configuration values
-            INSTANCE.cacheLayers = generateCacheLayers(layerConfigs);
-            INSTANCE.mainMemoryAccessTime = mainMemAT;
-
-            showMessageDialog(null, configFile + "has been loaded correctly.", "Cache Load JSON", INFORMATION_MESSAGE);
-
+            this.cacheLayers = generateCacheLayers(layerConfigs);
+            this.mainMemoryAccessTime = mainMemAT;
+            this.configured = true;
+            this.configName = fileName.substring(0, fileName.indexOf('.'));
 
         } catch (FileNotFoundException e) {
             showMessageDialog(null, e.getMessage(), "FileNotFoundException", INFORMATION_MESSAGE);
@@ -224,6 +245,7 @@ public class CacheManager {
     public void reset() {
         this.mainMemoryAccessTime = 0;
         this.cacheLayers = new CacheLayer[0];
+        this.configured = false;
     }
 
     public int getMainMemoryAccessTime() {

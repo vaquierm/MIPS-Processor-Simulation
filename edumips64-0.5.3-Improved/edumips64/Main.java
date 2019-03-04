@@ -27,26 +27,23 @@ import edumips64.ui.*;
 import edumips64.img.*;
 import edumips64.utils.*;
 import edumips64.core.*;
-import edumips64.core.is.*;
+import utils.JsonWriter;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.KeyEvent.*;
-import java.net.*;
+import java.io.FileWriter;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.logging.Handler;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.SimpleFormatter;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.KeyStroke.*;
-import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /** Entry point of EduMIPS64
  * @author Andrea Spadaccini, Antonella Scandura, Vanni Rizzo
@@ -63,7 +60,7 @@ public class Main extends JApplet {
     static Config cfg;
 
     static JFrame f=null;
-    private static JMenuItem open, softReset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop, load_JSON, hardReset, clearCacheConfig;
+    private static JMenuItem open, softReset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop, load_JSON, hardReset, clearCacheConfig, exportStats;
     private static StatusBar sb;
     private static JMenu file, lastfiles, exec, config, window, help, lang, tools, cache;
     private static JCheckBoxMenuItem lang_en,lang_it, pipeFrameMI, codeFrameMI;
@@ -376,29 +373,35 @@ public class Main extends JApplet {
      *    @param s the new CPU status
      * */
     public static void changeShownMenuItems(CPU.CPUStatus s) {
-        if(s == CPU.CPUStatus.READY) {
-            log.info("CPU Ready");
-            setCacheMenuItemsStatus(false);
-            setRunningMenuItemsStatus(false);
-            cache.setEnabled(true);
-        }
-        else if (s == CPU.CPUStatus.RUNNING) {
-            log.info("CPU Running");
-            setCacheMenuItemsStatus(false);
-            setRunningMenuItemsStatus(true);
-            cache.setEnabled(false);
-        }
-        else if(s == CPU.CPUStatus.STOPPING) {
-            log.info("CPU Stopping");
-            setCacheMenuItemsStatus(false);
-            setRunningMenuItemsStatus(true);
-            cache.setEnabled(false);
-        }
-        else if (s == CPU.CPUStatus.HALTED) {
-            log.info("CPU Halted");
-            setCacheMenuItemsStatus(true);
-            setRunningMenuItemsStatus(false);
-            cache.setEnabled(true);
+        switch (s) {
+            case READY:
+                log.info("CPU Ready");
+                setCacheMenuItemsStatus(false);
+                setRunningMenuItemsStatus(false);
+                cache.setEnabled(true);
+                exportStats.setEnabled(false);
+                clearCacheConfig.setEnabled(CacheManager.getInstance().getConfigured());
+                break;
+            case RUNNING:
+                log.info("CPU Running");
+                setCacheMenuItemsStatus(false);
+                setRunningMenuItemsStatus(true);
+                cache.setEnabled(false);
+                break;
+            case STOPPING:
+                log.info("CPU Stopping");
+                setCacheMenuItemsStatus(false);
+                setRunningMenuItemsStatus(true);
+                cache.setEnabled(false);
+                break;
+            case HALTED:
+                log.info("CPU Halted");
+                setCacheMenuItemsStatus(true);
+                setRunningMenuItemsStatus(false);
+                cache.setEnabled(true);
+                clearCacheConfig.setEnabled(CacheManager.getInstance().getConfigured());
+                exportStats.setEnabled(CacheManager.getInstance().getConfigured());
+                break;
         }
     }
 
@@ -587,6 +590,7 @@ public class Main extends JApplet {
         setGenericMenuItem(cache, "Cache Config");
         setGenericMenuItem(hardReset, "Hard Reset");
         setGenericMenuItem(clearCacheConfig, "Clear Cache Configuration");
+        setGenericMenuItem(exportStats, "Export Run Statistics");
     }
 
     public static boolean isWindows() {
@@ -846,8 +850,13 @@ public class Main extends JApplet {
                 int val = jfc.showOpenDialog(f);
                 if (val == JFileChooser.APPROVE_OPTION) {
                     String filePath = jfc.getSelectedFile().getPath();
+                    String fileName = jfc.getSelectedFile().getName();
                     Config.set("lastdir", jfc.getCurrentDirectory());
-                    CacheManager.getInstance().setup(filePath);
+                    CacheManager.getInstance().setup(fileName, filePath);
+                    if(CacheManager.getInstance().getConfigured()){
+                        clearCacheConfig.setEnabled(true);
+                        showMessageDialog(null, filePath + " has been loaded correctly.", "Cache Load JSON", INFORMATION_MESSAGE);
+                    }
                 }
                 jfc.resetChoosableFileFilters();
             }
@@ -859,7 +868,34 @@ public class Main extends JApplet {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CacheManager.getInstance().reset();
-                JOptionPane.showMessageDialog(null, "The cache configuration has been reset correctly", "Cache Reset Configuration", JOptionPane.INFORMATION_MESSAGE);
+                if(!CacheManager.getInstance().getConfigured()) {
+                    JOptionPane.showMessageDialog(null, "The cache configuration has been reset correctly", "Cache Configuration Reset", JOptionPane.INFORMATION_MESSAGE);
+                    clearCacheConfig.setEnabled(false);
+                }
+            }
+        });
+
+        exportStats = new JMenuItem();
+        cache.add(exportStats);
+        exportStats.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON Files", "json");
+                jfc.setFileFilter(filter);
+                String openedName = (new File(openedFile)).getName();
+                utils.Report rep = JsonWriter.write(openedName);
+                jfc.setSelectedFile(new File(rep.getName()));
+
+                int val = jfc.showSaveDialog(f);
+                if (val == JFileChooser.APPROVE_OPTION){
+                  try( FileWriter fw = new FileWriter(jfc.getSelectedFile().getPath())){
+                      fw.write(rep.getData());
+                  } catch (IOException ioe) {
+                      JOptionPane.showMessageDialog(null, ioe.getMessage(), "IOEXception", INFORMATION_MESSAGE);
+                  }
+                  Config.set("lastdir", jfc.getCurrentDirectory());
+                }
+                jfc.resetChoosableFileFilters();
             }
         });
 
