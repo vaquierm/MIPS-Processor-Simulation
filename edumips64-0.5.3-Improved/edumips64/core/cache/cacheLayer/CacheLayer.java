@@ -36,6 +36,21 @@ public abstract class CacheLayer implements ICacheLayer {
     int offsetBits;
 
     /**
+     * Misses occurred in this level
+     */
+    public int misses;
+
+    /**
+     * Hits occurred in this level
+     */
+    public int hits;
+
+    /**
+     * Number of total accesses in this level
+     */
+    public int accesses;
+
+    /**
      * The write strategy that the cache uses
      */
     WriteStrategy writeStrategy;
@@ -43,7 +58,9 @@ public abstract class CacheLayer implements ICacheLayer {
     public CacheLayer(int cacheSize, int blockSize, int accessTime, WriteStrategy writeStrategy) throws InvalidCacheSizeException, InvalidPowerOfTwoException {
         this.cacheSize = cacheSize;
         this.blockSize = blockSize;
-
+        this.hits = 0;
+        this.misses = 0;
+        this.accesses = 0;
         if (this.cacheSize % this.blockSize != 0) {
             throw new InvalidCacheSizeException();
         }
