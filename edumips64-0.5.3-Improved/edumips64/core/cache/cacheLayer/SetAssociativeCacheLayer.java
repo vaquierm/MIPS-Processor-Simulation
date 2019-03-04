@@ -35,9 +35,6 @@ public class SetAssociativeCacheLayer extends CacheLayer {
      */
     private final int setIndexMask;
 
-
-
-
     /**
      * Creates an instance of Associative cache
      * @param cacheSize  Total cache size

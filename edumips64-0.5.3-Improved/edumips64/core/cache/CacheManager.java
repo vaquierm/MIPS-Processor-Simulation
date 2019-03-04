@@ -286,12 +286,14 @@ public class CacheManager {
 
         int delay = 0;
 
+        layer.accesses += 1;
         switch (layer.getWriteStrategy()) {
             case WRITE_BACK:
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Write hit, just write to this layer
                     delay += layer.getAccessTime();
+                    layer.hits += 1;
                 }
                 else {
                     // Write miss
@@ -317,6 +319,7 @@ public class CacheManager {
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Write hit
+                    layer.hits += 1;
                     delay += layer.getAccessTime();
                     CacheBlock cb = layer.put(address);
                     cb.setDirty(false);
@@ -344,13 +347,14 @@ public class CacheManager {
         CacheLayer layer = cacheLayers[layerNumber];
 
         int delay = 0;
-
+        layer.accesses += 1;
         switch (layer.getWriteStrategy()) {
             case WRITE_BACK:
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
                     delay += layer.getAccessTime();
+                    layer.hits += 1;
 
                 }
                 else {
@@ -367,6 +371,7 @@ public class CacheManager {
                 // Check if hit or miss
                 if (layer.contains(address)) {
                     // Read hit
+                    layer.hits += 1;
                     delay += layer.getAccessTime();
                 }
                 else {
