@@ -27,6 +27,7 @@ import edumips64.ui.*;
 import edumips64.img.*;
 import edumips64.utils.*;
 import edumips64.core.*;
+import utils.JsonWriter;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -849,8 +850,9 @@ public class Main extends JApplet {
                 int val = jfc.showOpenDialog(f);
                 if (val == JFileChooser.APPROVE_OPTION) {
                     String filePath = jfc.getSelectedFile().getPath();
+                    String fileName = jfc.getSelectedFile().getName();
                     Config.set("lastdir", jfc.getCurrentDirectory());
-                    CacheManager.getInstance().setup(filePath);
+                    CacheManager.getInstance().setup(fileName, filePath);
                     if(CacheManager.getInstance().getConfigured()){
                         clearCacheConfig.setEnabled(true);
                         showMessageDialog(null, filePath + " has been loaded correctly.", "Cache Load JSON", INFORMATION_MESSAGE);
@@ -880,20 +882,19 @@ public class Main extends JApplet {
             public void actionPerformed(ActionEvent e) {
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON Files", "json");
                 jfc.setFileFilter(filter);
+                String openedName = (new File(openedFile)).getName();
+                utils.Report rep = JsonWriter.write(openedName);
+                jfc.setSelectedFile(new File(rep.getName()));
 
-//                TODO once we can generate and get the stats object, uncomment and modify the following code:
-//                StatsObject stats = getRunStats();
-//                jfc.setSelectedFile(new File(stats.name));
-//
-//                int val = jfc.showSaveDialog(f);
-//                if (val == JFileChooser.APPROVE_OPTION){
-//                  try( FileWriter fw = new FileWriter(jfc.getSelectedFile().getPath())){
-//                      fw.write(stats.data);
-//                  } catch (IOException ioe) {
-//
-//                  }
-//                  Config.set("lastdir", jfc.getCurrentDirectory());
-//                }
+                int val = jfc.showSaveDialog(f);
+                if (val == JFileChooser.APPROVE_OPTION){
+                  try( FileWriter fw = new FileWriter(jfc.getSelectedFile().getPath())){
+                      fw.write(rep.getData());
+                  } catch (IOException ioe) {
+                      JOptionPane.showMessageDialog(null, ioe.getMessage(), "IOEXception", INFORMATION_MESSAGE);
+                  }
+                  Config.set("lastdir", jfc.getCurrentDirectory());
+                }
                 jfc.resetChoosableFileFilters();
             }
         });

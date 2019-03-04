@@ -51,8 +51,8 @@ public class CacheManager {
      *
      * @param configFile config file filepath
      */
-    private CacheManager(String configFile) {
-        setup(configFile);
+    private CacheManager(String filename, String configFile) {
+        setup(filename, configFile);
     }
 
     /**
@@ -85,6 +85,17 @@ public class CacheManager {
     }
 
     /**
+     * Name for the configuration, from filename
+     */
+    private String configName;
+
+    /**
+     * getter for configName
+     * @return configName
+     */
+    public String getConfigName() {return configName;}
+
+    /**
      * Mini class to hold the configurations of each layer
      */
     class CacheLayerConfig {
@@ -100,10 +111,9 @@ public class CacheManager {
      *
      * @param configFile config file filepath
      */
-    public void setup(String configFile) {
+    public void setup(String fileName, String configFile) {
         int mainMemAT;
         CacheLayerConfig[] layerConfigs;
-
         JSONParser parser = new JSONParser();
 
         try {
@@ -131,6 +141,7 @@ public class CacheManager {
             this.cacheLayers = generateCacheLayers(layerConfigs);
             this.mainMemoryAccessTime = mainMemAT;
             this.configured = true;
+            this.configName = fileName.substring(0, fileName.indexOf('.'));
 
         } catch (FileNotFoundException e) {
             showMessageDialog(null, e.getMessage(), "FileNotFoundException", INFORMATION_MESSAGE);

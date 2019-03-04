@@ -6,12 +6,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 public class JsonWriter {
 
-    public void write() {
+    public static Report write(String runningFile) {
         JSONObject obj = new JSONObject();
         CacheManager cm = CacheManager.getInstance();
         CacheLayer[] layers =  cm.getCacheLayers();
@@ -29,17 +28,20 @@ public class JsonWriter {
         obj.put("write_strategies", strategies);
         obj.put("hit_rates", hitRates);
         obj.put("Memory stalls", CPU.getInstance().getMemoryStalls());
-        try (FileWriter file = new FileWriter(getNewFileName("result"))) {
-
-            file.write(obj.toJSONString());
-            file.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return new Report(generateReportName(runningFile.substring(0, runningFile.indexOf('.'))), obj.toJSONString());
     }
 
-    public static String getNewFileName(String filename) throws IOException {
+    /**
+     * Generate a name for the computed report,
+     * @return
+     */
+    private static String generateReportName(String runningFile){
+        //TODO decide on file naming scheme
+        // Temp scheme is RunFileName_CacheFileName
+        return runningFile + "_" + CacheManager.getInstance().getConfigName()+".json";
+    }
+
+    private static String getNewFileName(String filename) throws IOException {
         File aFile = new File(filename);
         int fileNo = 0;
         String newFileName = "";
