@@ -1,6 +1,7 @@
 package edumips64.core.cache;
 
 import edumips64.core.cache.cacheExceptions.*;
+import edumips64.core.cache.cacheLayer.AssociativeCacheLayer;
 import edumips64.core.cache.cacheLayer.DirectMappedCacheLayer;
 import edumips64.core.cache.cacheLayer.ICache.ICacheLayer;
 import edumips64.core.cache.cacheLayer.ICache.ICacheLayer.MemoryAccessType;
@@ -150,22 +151,31 @@ public class CacheManager {
 
         } catch (FileNotFoundException e) {
             showMessageDialog(null, e.getMessage(), "FileNotFoundException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         } catch (IOException e) {
             showMessageDialog(null, e.getMessage(), "IOException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         } catch (org.json.simple.parser.ParseException e) {
             showMessageDialog(null, e.getMessage(), "ParseException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         } catch (InvalidAccessTimeException e) {
             showMessageDialog(null, e.getMessage(), "InvalidAccessTimeException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         } catch (InvalidCacheSizeStringFormatException e) {
             showMessageDialog(null, e.getMessage(), "InvalidCacheSizeStringFormatException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         } catch (InvalidBlocksPerSetException e) {
             showMessageDialog(null, e.getMessage(), "InvalidBlocksPerSetException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         } catch (InvalidPowerOfTwoException e) {
             showMessageDialog(null, e.getMessage(), "InvalidPowerOfTwoException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         } catch (InvalidCacheSizeException e) {
             showMessageDialog(null, e.getMessage(), "InvalidCacheSizeException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         } catch (InvalidMappingSchemeException e) {
             showMessageDialog(null, e.getMessage(), "InvalidMappingSchemeException", INFORMATION_MESSAGE);
+            CacheManager.getInstance().resetDefault();
         }
 
     }
@@ -181,24 +191,52 @@ public class CacheManager {
         // Only have Direct mapped cache available right now
         for (int i = 0; i < caches.length; i++) {
             CacheLayerConfig conf = configs[i];
-            switch (conf.mappingScheme) {
-                case "DIRECT":
-                    caches[i] = new DirectMappedCacheLayer(conf.size, conf.blockSize, conf.accessTime, conf.strategy);
-                    break;
-                case "FULLY_ASSOCIATIVE": // TODO implement full associativity
-                    break;
-                default:
-                    String mappingScheme = conf.mappingScheme;
-                    if (!mappingScheme.contains("_WAY_SET_ASSOCIATIVE"))
-                        throw new InvalidMappingSchemeException();
-                    try {
-                        String wayString = mappingScheme.split("_")[0];
 
-                        int ways = Integer.parseInt(wayString);
-                        caches[i] = new SetAssociativeCacheLayer(conf.size, conf.blockSize, ways, conf.accessTime, conf.strategy);
-                    } catch (Exception e) {
-                        throw new InvalidMappingSchemeException();
-                    }
+            if (conf.mappingScheme.equals("DIRECT")) {
+                caches[i] = new DirectMappedCacheLayer(conf.size, conf.blockSize, conf.accessTime, conf.strategy);
+            }
+            else if (conf.mappingScheme.contains("_WAY_SET_ASSOCIATIVE_")) {
+                try {
+                    String wayString = conf.mappingScheme.split("_")[0];
+                    String evictionScheme = conf.mappingScheme.split("_")[conf.mappingScheme.split("_").length - 1];
+
+                    int ways = Integer.parseInt(wayString);
+                    caches[i] = new SetAssociativeCacheLayer(conf.size, conf.blockSize, ways, conf.accessTime, conf.strategy, AssociativeCacheLayer.EvictionPolicy.valueOf(evictionScheme));
+                }
+                catch (InvalidBlocksPerSetException e) {
+                    throw e;
+                }
+                catch (InvalidCacheSizeException e) {
+                    throw e;
+                }
+                catch (InvalidPowerOfTwoException e) {
+                    throw e;
+                }
+                catch (Exception e) {
+                    throw new InvalidMappingSchemeException();
+                }
+            }
+            else if (conf.mappingScheme.contains("FULLY_ASSOCIATIVE")) {
+                //TODO : The fully associative cache needs a class
+                try {
+                    String evictionScheme = conf.mappingScheme.split("_")[conf.mappingScheme.split("_").length - 1];
+                    caches[i] = new SetAssociativeCacheLayer(conf.size, conf.blockSize, conf.size/conf.blockSize, conf.accessTime, conf.strategy, AssociativeCacheLayer.EvictionPolicy.valueOf(evictionScheme));
+                }
+                catch (InvalidBlocksPerSetException e) {
+                    throw e;
+                }
+                catch (InvalidCacheSizeException e) {
+                    throw e;
+                }
+                catch (InvalidPowerOfTwoException e) {
+                    throw e;
+                }
+                catch (Exception e) {
+                    throw new InvalidMappingSchemeException();
+                }
+            }
+            else {
+                throw new InvalidMappingSchemeException();
             }
         }
         return caches;
@@ -216,7 +254,7 @@ public class CacheManager {
         if (conf.accessTime < 1) {
             throw new InvalidAccessTimeException();
         }
-        if (!conf.mappingScheme.equals("DIRECT") && !conf.mappingScheme.equals("FULLY_ASSOCIATIVE") && !conf.mappingScheme.contains("_WAY_SET_ASSOCIATIVE")) {
+        if (!conf.mappingScheme.equals("DIRECT") && !conf.mappingScheme.contains("FULLY_ASSOCIATIVE") && !conf.mappingScheme.contains("_WAY_SET_ASSOCIATIVE")) {
             throw new InvalidMappingSchemeException();
         }
     }

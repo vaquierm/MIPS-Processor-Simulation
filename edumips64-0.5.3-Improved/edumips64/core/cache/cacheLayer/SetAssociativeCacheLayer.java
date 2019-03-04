@@ -7,12 +7,12 @@ import edumips64.core.cache.util.Log2;
 /**
  * Set associative caches have multiple sets which contain multiple blocks
  */
-public class SetAssociativeCacheLayer extends CacheLayer {
+public class SetAssociativeCacheLayer extends AssociativeCacheLayer {
 
     /**
      * 2D array holding sets, each entry corresponds to all blocks in the set
      */
-    private CacheBlock[][] setsArray;
+    private PriorityCacheBlock[][] setsArray;
 
     /**
      * Number of sets in the cache
@@ -42,13 +42,14 @@ public class SetAssociativeCacheLayer extends CacheLayer {
      * @param blocksPerSet  Number of blocks per set
      * @param accessTime  Access time of the cache
      * @param writeStrategy  The write strategy
+     * @param evictionPolicy  The eviction policy
      * @throws InvalidCacheSizeException
      */
-    public SetAssociativeCacheLayer(int cacheSize, int blockSize, int blocksPerSet, int accessTime, WriteStrategy writeStrategy) throws InvalidCacheSizeException, InvalidPowerOfTwoException, InvalidBlocksPerSetException {
-        super(cacheSize, blockSize, accessTime, writeStrategy);
+    public SetAssociativeCacheLayer(int cacheSize, int blockSize, int blocksPerSet, int accessTime, WriteStrategy writeStrategy, EvictionPolicy evictionPolicy) throws InvalidCacheSizeException, InvalidPowerOfTwoException, InvalidBlocksPerSetException {
+        super(cacheSize, blockSize, accessTime, writeStrategy, evictionPolicy);
 
         // Check that the number of blocks per set is a power of two
-        if (Log2.compute(blocksPerSet) < 0 || blocksPerSet >= numberOfBlocks) {
+        if (Log2.compute(blocksPerSet) <= 1 || blocksPerSet > numberOfBlocks) {
             throw new InvalidBlocksPerSetException();
         }
 
@@ -66,12 +67,12 @@ public class SetAssociativeCacheLayer extends CacheLayer {
         mask = mask << this.offsetBits;
         this.setIndexMask = mask;
 
-        this.setsArray = new CacheBlock[numberOfSets][numberOfBlocksPerSet];
+        this.setsArray = new PriorityCacheBlock[numberOfSets][numberOfBlocksPerSet];
 
         // Populate the cache with invalid blocks
         for (int i = 0; i < this.numberOfSets; i ++) {
             for (int j = 0; j < this. numberOfBlocksPerSet; j++) {
-                this.setsArray[i][j] = new CacheBlock();
+                this.setsArray[i][j] = new PriorityCacheBlock();
             }
         }
 
@@ -101,6 +102,20 @@ public class SetAssociativeCacheLayer extends CacheLayer {
 
     @Override
     public boolean contains(int address) {
+
+        boolean contained = containsBlock(address);
+
+        if (contained) {
+            // Contains is called when an element is being accessed from outside we want to update priorities
+            int setIndex = ((address & this.setIndexMask) >>> this.offsetBits);
+
+            updateEvictionPriorities(this.setsArray[setIndex], setIndex);
+        }
+
+        return contained;
+    }
+
+    private boolean containsBlock(int address) {
         int setIndex = ((address & this.setIndexMask) >>> this.offsetBits);
 
         return findBlockInSet(setIndex, computeTag(address)) != null;
@@ -108,12 +123,35 @@ public class SetAssociativeCacheLayer extends CacheLayer {
 
     @Override
     public CacheBlock put(int address) throws CacheAlreadyContainsBlockException {
-        return null; //TODO: Need to figure out eviction policy. Do we want to add a layer of abstraction to do eviction?
+
+        // Check if this block already exists
+        if (this.containsBlock(address)) {
+            throw new CacheAlreadyContainsBlockException();
+        }
+
+        // Get the set to put in
+        int setIndex = ((address & this.setIndexMask) >>> this.offsetBits);
+
+        PriorityCacheBlock[] set = this.setsArray[setIndex];
+
+        int indexToEvict = findIndexToEvict(set);
+
+        CacheBlock evictedBlock = set[indexToEvict];
+
+        set[indexToEvict] = new PriorityCacheBlock(address, this.offsetBits, this.setIndexBits);
+
+        // If the eviction policy is LRU we just placed a new block and want to update the priorities
+        if (this.evictionPolicy == EvictionPolicy.LRU) {
+            updateEvictionPriorities(set, indexToEvict);
+        }
+
+        return evictedBlock;
+
     }
 
     @Override
     public void dirtyBlock(int address) throws BlockNotFoundException {
-        if (!contains(address)) {
+        if (!containsBlock(address)) {
             throw new BlockNotFoundException();
         }
 
@@ -131,7 +169,7 @@ public class SetAssociativeCacheLayer extends CacheLayer {
     public void reset() {
         for (int i = 0; i < this.numberOfSets; i ++) {
             for (int j = 0; j < this. numberOfBlocksPerSet; j++) {
-                this.setsArray[i][j] = new CacheBlock();
+                this.setsArray[i][j] = new PriorityCacheBlock();
             }
         }
     }
