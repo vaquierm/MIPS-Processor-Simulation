@@ -69,7 +69,7 @@ public class GUIStatistics extends GUIComponent {
 
 	public void update ()
 	{
-		nCycles = cpu.getCycles();
+		nCycles = cpu.getCycles() + cpu.getMemoryStalls();
 		nInstructions = cpu.getInstructions();
 		if (nInstructions >0) {
 			cpi = (float)nCycles/(float)nInstructions;
