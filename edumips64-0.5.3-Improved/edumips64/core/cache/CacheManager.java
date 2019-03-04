@@ -251,6 +251,7 @@ public class CacheManager {
         this.mainMemoryAccessTime = 0;
         this.cacheLayers = new CacheLayer[0];
         this.configured = false;
+        this.configName = null;
         this.enabled = true;
     }
 
