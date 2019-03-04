@@ -259,7 +259,9 @@ public class CacheManager {
      * Empties all caches and reset
      */
     public void reset() {
-
+        for (CacheLayer layer : this.cacheLayers) {
+            layer.reset();
+        }
     }
 
     public int getMainMemoryAccessTime() {
