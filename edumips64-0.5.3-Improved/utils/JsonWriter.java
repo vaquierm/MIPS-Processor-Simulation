@@ -14,20 +14,20 @@ public class JsonWriter {
         JSONObject obj = new JSONObject();
         CacheManager cm = CacheManager.getInstance();
         CacheLayer[] layers =  cm.getCacheLayers();
-        obj.put("number_of_caches", layers.length);
-        JSONArray blockSizes = new JSONArray();
-        JSONArray strategies = new JSONArray();
-        JSONArray hitRates = new JSONArray();
+        obj.put("benchmark_name", runningFile);
+        obj.put("MMAT", cm.getMainMemoryAccessTime());
+        JSONArray caches = new JSONArray();
         for(CacheLayer cl : layers) {
-            blockSizes.add(cl.getBlockSize());
-            strategies.add(cl.getWriteStrategy().name());
-            hitRates.add(cl.hits / (double)(cl.accesses));
+            JSONObject temp = new JSONObject();
+            temp.put("block_size", cl.getBlockSize());
+            temp.put("size", cl.getCacheSize());
+            temp.put("strategy", cl.getWriteStrategy().name());
+            temp.put("access_time", cl.getAccessTime());
+            temp.put("hit_rate", cl.hits / (double)(cl.accesses));
+            caches.add(temp);
         }
+        obj.put("caches", caches);
 
-        obj.put("block_sizes", blockSizes);
-        obj.put("write_strategies", strategies);
-        obj.put("hit_rates", hitRates);
-        obj.put("Memory stalls", CPU.getInstance().getMemoryStalls());
         return new Report(generateReportName(runningFile.substring(0, runningFile.indexOf('.'))), obj.toJSONString());
     }
 
