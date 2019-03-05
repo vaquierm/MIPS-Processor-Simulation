@@ -102,6 +102,20 @@ public class CacheManager {
     public String getConfigName() {return configName;}
 
     /**
+     * Calculate the overall AMAT for this cache configuration
+     * @return
+     */
+    public double calculateAMAT(int index) {
+        if(index < 0 || index >= cacheLayers.length) {
+            return mainMemoryAccessTime;
+        }
+
+        CacheLayer cl = cacheLayers[index];
+        double hitRate = cl.hits / (double) cl.accesses;
+        return hitRate * cl.getAccessTime() + (1 - hitRate) * calculateAMAT(index + 1);
+    }
+
+    /**
      * Mini class to hold the configurations of each layer
      */
     class CacheLayerConfig {
