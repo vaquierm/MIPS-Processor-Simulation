@@ -2,15 +2,15 @@
   "mmat" : 50,
   "caches" : [
     {
-      "size" : "64KB",
-      "blockSize" : "4KB",
+      "size" : "64B",
+      "blockSize" : "8B",
       "accessTime" : 5,
       "mappingScheme" : "4_WAY_SET_ASSOCIATIVE_LRU",
       "writeStrategy" :  "WRITE_BACK"
     },
     {
-      "size" : "128KB",
-      "blockSize" : "16KB",
+      "size" : "128B",
+      "blockSize" : "16B",
       "accessTime" : 15,
       "mappingScheme" : "FULLY_ASSOCIATIVE_FIFO",
       "writeStrategy" :  "WRITE_THROUGH"

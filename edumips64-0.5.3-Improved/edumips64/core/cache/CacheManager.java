@@ -275,7 +275,7 @@ public class CacheManager {
                 case 'G':
                     return Integer.parseInt(size.substring(0, index - 1)) * 1024 * 1024 * 1024;
                 default:
-                    return Integer.parseInt(size.substring(0, index - 1));
+                    return Integer.parseInt(size.substring(0, index));
             }
         } else {
             throw new InvalidCacheSizeStringFormatException();

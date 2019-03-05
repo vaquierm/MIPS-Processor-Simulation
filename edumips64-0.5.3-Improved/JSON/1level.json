@@ -2,9 +2,9 @@
   "mmat" : 50,
   "caches" : [
     {
-      "size" : "128KB",
-      "blockSize" : "16KB",
-      "accessTime" : 3,
+      "size" : "128B",
+      "blockSize" : "16B",
+      "accessTime" : 5,
       "mappingScheme" : "DIRECT",
       "writeStrategy" :  "WRITE_BACK"
     }

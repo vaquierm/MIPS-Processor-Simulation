@@ -1,0 +1,12 @@
+{
+    "mmat" : 50,
+    "caches" : [
+      {
+        "size" : "512B",
+        "blockSize" : "32B",
+        "accessTime" : 5,
+        "mappingScheme" : "DIRECT",
+        "writeStrategy" :  "WRITE_THROUGH"
+      }
+    ]
+  }
