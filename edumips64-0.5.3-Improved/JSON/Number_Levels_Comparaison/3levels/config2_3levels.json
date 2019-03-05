@@ -1,0 +1,26 @@
+{
+    "mmat" : 50,
+    "caches" : [
+      {
+        "size" : "32B",
+        "blockSize" : "4B",
+        "accessTime" : 2,
+        "mappingScheme" : "2_WAY_SET_ASSOCIATIVE",
+        "writeStrategy" :  "WRITE_BACK"
+      },
+      {
+        "size" : "128B",
+        "blockSize" : "32B",
+        "accessTime" : 8,
+        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE",
+        "writeStrategy" :  "WRITE_BACK"
+      },
+      {
+        "size" : "256B",
+        "blockSize" : "32B",
+        "accessTime" : 15,
+        "mappingScheme" : "8_WAY_SET_ASSOCIATIVE",
+        "writeStrategy" :  "WRITE_BACK"
+      }
+    ]
+  }

@@ -1,0 +1,12 @@
+{
+    "mmat" : 50,
+    "caches" : [
+      {
+        "size" : "64B",
+        "blockSize" : "8B",
+        "accessTime" : 5,
+        "mappingScheme" : "FULLY_ASSOCIATIVE_FIFO",
+        "writeStrategy" :  "WRITE_BACK"
+      }
+    ]
+  }
