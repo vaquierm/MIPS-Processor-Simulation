@@ -23,6 +23,7 @@
 
 package edumips64.ui;
 import edumips64.core.*;
+import edumips64.core.cache.CacheManager;
 import edumips64.utils.*;
 import java.util.*;
 import java.awt.*;
@@ -174,14 +175,18 @@ public class GUIStatistics extends GUIComponent {
 						label.setFont(f);
 						return label;
 					case 14:
-						label.setText(" ");
+						label.setText(" AMAT: " + cpu.getAMAT());
+						label.setFont(f);
 						return label;
 					case 15:
+						label.setText(" ");
+						return label;
+					case 16:
 						label.setText(" " + CurrentLocale.getString("CSIZE"));
 						label.setForeground(Color.red);
 						label.setFont(f);
 						return label;
-					case 16:
+					case 17:
 						label.setText(" " + codeSize + " " + CurrentLocale.getString("BYTES"));
 						label.setFont(f);
 						return label;

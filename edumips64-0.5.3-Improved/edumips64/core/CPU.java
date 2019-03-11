@@ -207,6 +207,19 @@ public class CPU
 	}
 
 	/**
+	 * Returns AMAT read value of cache
+	 */
+	public double getAMATRead() {
+		return CacheManager.getInstance().calculateAMATRead();
+	}
+	public double getAMATWrite() {
+		return CacheManager.getInstance().calculateAMATWrite();
+	}
+
+	public double getAMAT() {
+		return CacheManager.getInstance().calculateAMAT();
+	}
+	/**
 	 * Add some stalls to the memory stall count when there is a cache miss
 	 * @param stalls  Number of stalls to add
 	 */
