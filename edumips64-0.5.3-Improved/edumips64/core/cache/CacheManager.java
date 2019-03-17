@@ -46,6 +46,14 @@ public class CacheManager {
     private boolean enabled;
 
     /**
+     * Variables for calculating AMAT
+     */
+    private int readTotal;
+    private int reads;
+    private int writes;
+    private int writeTotal;
+
+    /**
      * Create an empty cache with no access time to main memory
      */
     private CacheManager() {
@@ -100,6 +108,7 @@ public class CacheManager {
      * @return configName
      */
     public String getConfigName() {return configName;}
+
 
     /**
      * Mini class to hold the configurations of each layer
@@ -287,6 +296,7 @@ public class CacheManager {
      */
     public void resetDefault() {
         this.mainMemoryAccessTime = 0;
+        this.reads = this.writes = this.readTotal = this.writeTotal = 0;
         this.cacheLayers = new CacheLayer[0];
         this.configured = false;
         this.configName = null;
@@ -297,6 +307,7 @@ public class CacheManager {
      * Empties all caches and reset
      */
     public void reset() {
+        this.reads = this.writes = this.readTotal = this.writeTotal = 0;
         for (CacheLayer layer : this.cacheLayers) {
             layer.reset();
         }
@@ -306,6 +317,29 @@ public class CacheManager {
         return this.mainMemoryAccessTime;
     }
 
+    /**
+     * Calculate AMAT for write
+     */
+
+    public double calculateAMATWrite(){
+        return writeTotal / (double) writes;
+    }
+
+    /**
+     * Calculate AMAT for read
+     */
+
+    public double calculateAMATRead() {
+        return readTotal / (double) reads;
+    }
+
+    /**
+     * Calculate total AMAT
+     * @return
+     */
+    public double calculateAMAT() {
+        return (reads / (double) (reads + writes)) * calculateAMATRead()+  (writes / (double) (reads + writes)) * calculateAMATWrite();
+    }
     /**
      * Calculate the latency of the memory access
      *
@@ -323,10 +357,16 @@ public class CacheManager {
         try {
             switch (accessType) {
                 case READ:
+                    reads++;
                     delay = readFromLayer(0, address);
+                    readTotal += delay;
                     break;
                 case WRITE:
+                    writes++;
                     delay = writeToLayer(0, address);
+                    writeTotal += delay;
+                    break;
+                case NONE:
                     break;
             }
         } catch (Exception e) {
