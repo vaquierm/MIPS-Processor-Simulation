@@ -17,6 +17,13 @@ public class JsonWriter {
         obj.put("benchmark_name", runningFile);
         obj.put("MMAT", cm.getMainMemoryAccessTime());
         JSONArray caches = new JSONArray();
+        double amat = cm.calculateAMAT();
+        double amatRead = cm.calculateAMATRead();
+        double amatWrite = cm.calculateAMATWrite();
+        obj.put("amat", amat);
+        obj.put("amat_read", amatRead);
+        obj.put("amat_write", amatWrite);
+        obj.put("number_layers", layers.length);
         for(CacheLayer cl : layers) {
             JSONObject temp = new JSONObject();
             temp.put("block_size", cl.getBlockSize());

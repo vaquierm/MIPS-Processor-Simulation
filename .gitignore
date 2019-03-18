@@ -23,3 +23,5 @@ hs_err_pid*
 */out/
 */.idea
 *.iml
+edumips64-0.5.3-Improved/benchmark_results
+edumips64-0.5.3-Improved/JSON/JSONResults
