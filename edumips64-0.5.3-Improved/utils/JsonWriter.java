@@ -2,6 +2,8 @@ package utils;
 import edumips64.core.CPU;
 import edumips64.core.cache.CacheManager;
 import edumips64.core.cache.cacheLayer.CacheLayer;
+import edumips64.core.cache.cacheLayer.DirectMappedCacheLayer;
+import edumips64.core.cache.cacheLayer.SetAssociativeCacheLayer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -26,6 +28,12 @@ public class JsonWriter {
         obj.put("number_layers", layers.length);
         for(CacheLayer cl : layers) {
             JSONObject temp = new JSONObject();
+            if(cl instanceof DirectMappedCacheLayer) {
+                temp.put("associativity", "direct_mapped");
+            } else if(cl instanceof SetAssociativeCacheLayer) {
+                int num = ((SetAssociativeCacheLayer) cl).getNumberOfBlocksPerSet();
+                temp.put("associativity", num + "-way_set_associative");
+            }
             temp.put("block_size", cl.getBlockSize());
             temp.put("size", cl.getCacheSize());
             temp.put("strategy", cl.getWriteStrategy().name());

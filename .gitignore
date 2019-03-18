@@ -25,3 +25,4 @@ hs_err_pid*
 *.iml
 edumips64-0.5.3-Improved/benchmark_results
 edumips64-0.5.3-Improved/JSON/JSONResults
+edumips64-0.5.3-Improved/JSON/JSON_results/compitoa_2level.json
