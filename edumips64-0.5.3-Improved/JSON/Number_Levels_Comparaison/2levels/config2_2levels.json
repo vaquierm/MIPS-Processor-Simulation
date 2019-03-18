@@ -5,14 +5,14 @@
         "size" : "32B",
         "blockSize" : "4B",
         "accessTime" : 2,
-        "mappingScheme" : "2_WAY_SET_ASSOCIATIVE",
+        "mappingScheme" : "2_WAY_SET_ASSOCIATIVE_LRU",
         "writeStrategy" :  "WRITE_BACK"
       },
       {
         "size" : "128B",
         "blockSize" : "32B",
         "accessTime" : 8,
-        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE",
+        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE_LRU",
         "writeStrategy" :  "WRITE_BACK"
       }
     ]

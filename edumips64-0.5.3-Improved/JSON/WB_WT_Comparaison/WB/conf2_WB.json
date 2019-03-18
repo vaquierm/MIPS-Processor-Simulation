@@ -12,7 +12,7 @@
         "size" : "128B",
         "blockSize" : "16B",
         "accessTime" : 15,
-        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE",
+        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE_FIFO",
         "writeStrategy" :  "WRITE_BACK"
       }
     ]

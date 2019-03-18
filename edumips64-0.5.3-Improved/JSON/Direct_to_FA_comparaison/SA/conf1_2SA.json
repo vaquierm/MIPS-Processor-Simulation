@@ -4,15 +4,15 @@
       {
         "size" : "64B",
         "blockSize" : "8B",
-        "accessTime" : 5,
-        "mappingScheme" : "DIRECT",
+        "accessTime" : 3,
+        "mappingScheme" : "2_WAY_SET_ASSOCIATIVE_LRU",
         "writeStrategy" :  "WRITE_THROUGH"
       },
       {
         "size" : "128B",
         "blockSize" : "16B",
-        "accessTime" : 15,
-        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE_FIFO",
+        "accessTime" : 8,
+        "mappingScheme" : "2_WAY_SET_ASSOCIATIVE_LRU",
         "writeStrategy" :  "WRITE_THROUGH"
       }
     ]
