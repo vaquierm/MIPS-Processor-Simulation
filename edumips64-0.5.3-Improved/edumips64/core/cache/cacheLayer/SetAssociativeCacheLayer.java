@@ -49,7 +49,7 @@ public class SetAssociativeCacheLayer extends AssociativeCacheLayer {
         super(cacheSize, blockSize, accessTime, writeStrategy, evictionPolicy);
 
         // Check that the number of blocks per set is a power of two
-        if (Log2.compute(blocksPerSet) <= 1 || blocksPerSet > numberOfBlocks) {
+        if (Log2.compute(blocksPerSet) < 1 || blocksPerSet > numberOfBlocks) {
             throw new InvalidBlocksPerSetException();
         }
 
