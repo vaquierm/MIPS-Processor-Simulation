@@ -6,14 +6,14 @@
         "blockSize" : "8B",
         "accessTime" : 2,
         "mappingScheme" : "DIRECT",
-        "writeStrategy" :  "WRITE_THROUGH"
+        "writeStrategy" :  "WRITE_BACK"
       },
       {
         "size" : "128B",
         "blockSize" : "16B",
         "accessTime" : 5,
         "mappingScheme" : "DIRECT",
-        "writeStrategy" :  "WRITE_BACK"
+        "writeStrategy" :  "WRITE_THROUGH"
       },
       {
         "size" : "256B",
