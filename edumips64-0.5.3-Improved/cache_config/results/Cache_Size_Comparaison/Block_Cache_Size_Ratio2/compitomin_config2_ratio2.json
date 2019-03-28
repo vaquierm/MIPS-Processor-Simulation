@@ -1,0 +1,1 @@
+{"amat":19.782608695652172,"number_layers":1,"caches":[{"size":128,"hit_rate":0.9173913043478261,"associativity":"direct_mapped","strategy":"WRITE_BACK","block_size":64,"access_time":15}],"amat_write":24.09090909090909,"MMAT":50,"benchmark_name":"compitomin.s","amat_read":19.5662100456621}
