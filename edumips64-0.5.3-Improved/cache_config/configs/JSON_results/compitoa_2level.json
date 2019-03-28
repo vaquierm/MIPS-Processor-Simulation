@@ -1,1 +1,0 @@
-{"amat":5.133333333333333,"number_layers":2,"caches":[{"size":64,"hit_rate":0.3422222222222222,"strategy":"WRITE_BACK","block_size":8,"access_time":5},{"size":128,"hit_rate":0.6153846153846154,"strategy":"WRITE_THROUGH","block_size":16,"access_time":15}],"amat_write":20.0,"MMAT":50,"benchmark_name":"compitoa.s","amat_read":4.295774647887324}

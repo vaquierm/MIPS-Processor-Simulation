@@ -4,23 +4,23 @@
       {
         "size" : "64B",
         "blockSize" : "8B",
-        "accessTime" : 2,
-        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE_RANDOM",
-        "writeStrategy" :  "WRITE_THROUGH"
+        "accessTime" : 5,
+        "mappingScheme" : "FULLY_ASSOCIATIVE_FIFO",
+        "writeStrategy" :  "WRITE_BACK"
       },
       {
         "size" : "128B",
         "blockSize" : "16B",
-        "accessTime" : 5,
-        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE_RANDOM",
+        "accessTime" : 10,
+        "mappingScheme" : "DIRECT",
         "writeStrategy" :  "WRITE_THROUGH"
       },
       {
         "size" : "256B",
         "blockSize" : "32B",
         "accessTime" : 20,
-        "mappingScheme" : "4_WAY_SET_ASSOCIATIVE_RANDOM",
-        "writeStrategy" :  "WRITE_THROUGH"
+        "mappingScheme" : "FULLY_ASSOCIATIVE_FIFO",
+        "writeStrategy" :  "WRITE_BACK"
       }
     ]
   }
