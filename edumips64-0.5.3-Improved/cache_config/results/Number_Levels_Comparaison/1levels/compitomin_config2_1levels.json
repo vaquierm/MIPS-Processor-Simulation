@@ -1,0 +1,18 @@
+{
+  "amat": 52.434782608695656,
+  "number_layers": 1,
+  "caches": [
+    {
+      "size": 32,
+      "hit_rate": 0.0391304347826087,
+      "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+      "strategy": "WRITE_BACK",
+      "block_size": 4,
+      "access_time": 2
+    }
+  ],
+  "amat_write": 38.36363636363637,
+  "MMAT": 50,
+  "benchmark_name": "compitomin.s",
+  "amat_read": 53.141552511415526
+}
