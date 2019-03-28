@@ -173,4 +173,8 @@ public class SetAssociativeCacheLayer extends AssociativeCacheLayer {
             }
         }
     }
+
+    public int getNumberOfBlocksPerSet() {
+        return this.numberOfBlocksPerSet;
+    }
 }
