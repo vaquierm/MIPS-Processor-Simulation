@@ -167,6 +167,7 @@ public class SetAssociativeCacheLayer extends AssociativeCacheLayer {
 
     @Override
     public void reset() {
+        super.reset();
         for (int i = 0; i < this.numberOfSets; i ++) {
             for (int j = 0; j < this. numberOfBlocksPerSet; j++) {
                 this.setsArray[i][j] = new PriorityCacheBlock();

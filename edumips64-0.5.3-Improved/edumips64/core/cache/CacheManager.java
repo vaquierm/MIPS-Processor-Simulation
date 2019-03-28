@@ -433,10 +433,6 @@ public class CacheManager {
                 if (layer.contains(address)) {
                     // Write hit
                     layer.hits += 1;
-
-                    // The evicted block is never dirsty so there is no need to write it back
-                    layer.put(address);
-
                 }
 
                 // In both cases, write the block to the lower layer

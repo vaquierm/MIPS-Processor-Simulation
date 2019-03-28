@@ -103,6 +103,7 @@ public class DirectMappedCacheLayer extends CacheLayer {
 
     @Override
     public void reset() {
+        super.reset();
         for (int i = 0; i < this.numberOfBlocks; i++) {
             this.blocksArray[i] = new CacheBlock();
         }

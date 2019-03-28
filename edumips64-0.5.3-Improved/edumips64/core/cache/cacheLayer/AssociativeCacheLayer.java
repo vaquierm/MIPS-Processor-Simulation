@@ -68,6 +68,11 @@ public abstract class AssociativeCacheLayer extends CacheLayer {
         }
     }
 
+    @Override
+    public void reset() {
+        super.reset();
+    }
+
     /**
      * All possible eviction policies in a set
      */

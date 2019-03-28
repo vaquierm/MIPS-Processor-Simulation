@@ -111,4 +111,10 @@ public abstract class CacheLayer implements ICacheLayer {
     public WriteStrategy getWriteStrategy() {
         return writeStrategy;
     }
+
+    @Override
+    public void reset() {
+        hits = 0;
+        accesses = 0;
+    }
 }

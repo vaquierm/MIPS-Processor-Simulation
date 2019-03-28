@@ -1,0 +1,9 @@
+{
+    "amat": 50.0,
+    "number_layers": 0,
+    "caches": [],
+    "amat_write": 50.0,
+    "MMAT": 50,
+    "benchmark_name": "compitoa.s",
+    "amat_read": 50.0
+}
