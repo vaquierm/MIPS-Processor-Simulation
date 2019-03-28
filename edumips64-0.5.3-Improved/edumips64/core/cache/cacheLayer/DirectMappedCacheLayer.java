@@ -47,7 +47,7 @@ public class DirectMappedCacheLayer extends CacheLayer {
         for (int i = 0; i < this.blockIndexBits; i++) {
             mask = (mask + 1) << 1;
         }
-        mask = mask << this.offsetBits;
+        mask = mask << (this.offsetBits - 1);
         this.blockIndexMask = mask;
 
         // Populate the cache with invalid blocks

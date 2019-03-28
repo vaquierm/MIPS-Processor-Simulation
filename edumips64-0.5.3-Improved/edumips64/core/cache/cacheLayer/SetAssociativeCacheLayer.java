@@ -64,7 +64,7 @@ public class SetAssociativeCacheLayer extends AssociativeCacheLayer {
         for (int i = 0; i < this.setIndexBits; i++) {
             mask = (mask + 1) << 1;
         }
-        mask = mask << this.offsetBits;
+        mask = mask << (this.offsetBits - 1);
         this.setIndexMask = mask;
 
         this.setsArray = new PriorityCacheBlock[numberOfSets][numberOfBlocksPerSet];
