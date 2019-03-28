@@ -1,0 +1,26 @@
+{
+  "amat": 11.600000000000001,
+  "number_layers": 2,
+  "caches": [
+    {
+      "size": 64,
+      "hit_rate": 0.7391304347826086,
+      "associativity": "direct_mapped",
+      "strategy": "WRITE_THROUGH",
+      "block_size": 8,
+      "access_time": 3
+    },
+    {
+      "size": 128,
+      "hit_rate": 0.6666666666666666,
+      "associativity": "direct_mapped",
+      "strategy": "WRITE_THROUGH",
+      "block_size": 16,
+      "access_time": 8
+    }
+  ],
+  "amat_write": 61.0,
+  "MMAT": 50,
+  "benchmark_name": "compitomin.s",
+  "amat_read": 9.118721461187215
+}
