@@ -7,6 +7,10 @@ public abstract class AssociativeCacheLayer extends CacheLayer {
 
     final EvictionPolicy evictionPolicy;
 
+    public EvictionPolicy getEvictionPolicy() {
+        return evictionPolicy;
+    }
+
     public AssociativeCacheLayer(int cacheSize, int blockSize, int accessTime, WriteStrategy writeStrategy, EvictionPolicy evictionPolicy) throws InvalidCacheSizeException, InvalidPowerOfTwoException {
         super(cacheSize, blockSize, accessTime, writeStrategy);
 

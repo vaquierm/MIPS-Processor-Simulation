@@ -31,8 +31,12 @@ public class JsonWriter {
             if(cl instanceof DirectMappedCacheLayer) {
                 temp.put("associativity", "direct_mapped");
             } else if(cl instanceof SetAssociativeCacheLayer) {
-                int num = ((SetAssociativeCacheLayer) cl).getNumberOfBlocksPerSet();
-                temp.put("associativity", num + "-way_set_associative");
+                SetAssociativeCacheLayer scl = (SetAssociativeCacheLayer) cl;
+                if(((SetAssociativeCacheLayer) cl).getNumberOfBlocksPerSet() == cl.getNumberOfBlocks()) {
+                    temp.put("associativity", "FULLY_ASSOCIATIVE_" + scl.getEvictionPolicy().name().toUpperCase());
+                }
+                int num = scl.getNumberOfBlocksPerSet();
+                temp.put("associativity", num + "_WAY_SET_ASSOCIATIVE_" + scl.getEvictionPolicy().name().toUpperCase());
             }
             temp.put("block_size", cl.getBlockSize());
             temp.put("size", cl.getCacheSize());
