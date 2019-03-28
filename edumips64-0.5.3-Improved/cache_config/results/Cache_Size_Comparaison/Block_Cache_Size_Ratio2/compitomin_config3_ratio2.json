@@ -1,1 +1,34 @@
-{"amat":17.565217391304348,"number_layers":3,"caches":[{"size":64,"hit_rate":0.6608695652173913,"associativity":"2_WAY_SET_ASSOCIATIVE_FIFO","strategy":"WRITE_BACK","block_size":32,"access_time":5},{"size":128,"hit_rate":0.7865168539325843,"associativity":"direct_mapped","strategy":"WRITE_THROUGH","block_size":64,"access_time":10},{"size":256,"hit_rate":0.36666666666666664,"associativity":"2_WAY_SET_ASSOCIATIVE_FIFO","strategy":"WRITE_BACK","block_size":128,"access_time":20}],"amat_write":30.454545454545453,"MMAT":50,"benchmark_name":"compitomin.s","amat_read":16.91780821917808}
+{
+    "amat": 17.565217391304348,
+    "number_layers": 3,
+    "caches": [
+        {
+            "size": 64,
+            "hit_rate": 0.6608695652173913,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 32,
+            "access_time": 5
+        },
+        {
+            "size": 128,
+            "hit_rate": 0.7865168539325843,
+            "associativity": "direct_mapped",
+            "strategy": "WRITE_THROUGH",
+            "block_size": 64,
+            "access_time": 10
+        },
+        {
+            "size": 256,
+            "hit_rate": 0.36666666666666664,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 128,
+            "access_time": 20
+        }
+    ],
+    "amat_write": 30.454545454545453,
+    "MMAT": 50,
+    "benchmark_name": "compitomin.s",
+    "amat_read": 16.91780821917808
+}
