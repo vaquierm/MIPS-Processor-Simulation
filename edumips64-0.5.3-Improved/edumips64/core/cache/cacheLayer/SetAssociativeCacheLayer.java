@@ -141,8 +141,10 @@ public class SetAssociativeCacheLayer extends AssociativeCacheLayer {
         set[indexToEvict] = new PriorityCacheBlock(address, this.offsetBits, this.setIndexBits);
 
         // If the eviction policy is LRU we just placed a new block and want to update the priorities
-        if (this.evictionPolicy == EvictionPolicy.LRU) {
-            updateEvictionPriorities(set, indexToEvict);
+        updateEvictionPriorities(set, indexToEvict);
+        if(this.evictionPolicy == EvictionPolicy.FIFO) {
+            // Eviction policy for FIFO
+            set[indexToEvict].setEvictionPriority(System.currentTimeMillis());
         }
 
         return evictedBlock;
