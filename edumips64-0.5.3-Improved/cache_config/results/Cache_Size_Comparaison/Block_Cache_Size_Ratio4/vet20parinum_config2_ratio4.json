@@ -1,0 +1,1 @@
+{"amat":15.242424242424244,"number_layers":1,"caches":[{"size":128,"hit_rate":0.9951515151515151,"associativity":"direct_mapped","strategy":"WRITE_BACK","block_size":32,"access_time":15}],"amat_write":15.0,"MMAT":50,"benchmark_name":"vet20parinum.s","amat_read":15.245398773006135}
