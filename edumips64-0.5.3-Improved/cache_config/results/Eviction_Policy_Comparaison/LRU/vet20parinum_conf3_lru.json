@@ -1,0 +1,42 @@
+{
+  "amat": 8.07878787878788,
+  "number_layers": 4,
+  "caches": [
+    {
+      "size": 64,
+      "hit_rate": 0.8690909090909091,
+      "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+      "strategy": "WRITE_BACK",
+      "block_size": 8,
+      "access_time": 5
+    },
+    {
+      "size": 128,
+      "hit_rate": 0.5172413793103449,
+      "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+      "strategy": "WRITE_BACK",
+      "block_size": 16,
+      "access_time": 10
+    },
+    {
+      "size": 512,
+      "hit_rate": 0.9322033898305084,
+      "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+      "strategy": "WRITE_BACK",
+      "block_size": 32,
+      "access_time": 20
+    },
+    {
+      "size": 1024,
+      "hit_rate": 0.5,
+      "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+      "strategy": "WRITE_BACK",
+      "block_size": 64,
+      "access_time": 25
+    }
+  ],
+  "amat_write": 22.0,
+  "MMAT": 50,
+  "benchmark_name": "vet20parinum.s",
+  "amat_read": 7.9079754601226995
+}

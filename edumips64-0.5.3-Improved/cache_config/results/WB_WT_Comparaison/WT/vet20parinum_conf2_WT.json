@@ -1,0 +1,26 @@
+{
+  "amat": 7.345454545454546,
+  "number_layers": 2,
+  "caches": [
+    {
+      "size": 64,
+      "hit_rate": 0.9212121212121213,
+      "associativity": "direct_mapped",
+      "strategy": "WRITE_THROUGH",
+      "block_size": 8,
+      "access_time": 5
+    },
+    {
+      "size": 128,
+      "hit_rate": 0.8840579710144928,
+      "associativity": "4_WAY_SET_ASSOCIATIVE_FIFO",
+      "strategy": "WRITE_THROUGH",
+      "block_size": 16,
+      "access_time": 15
+    }
+  ],
+  "amat_write": 70.0,
+  "MMAT": 50,
+  "benchmark_name": "vet20parinum.s",
+  "amat_read": 6.576687116564417
+}
