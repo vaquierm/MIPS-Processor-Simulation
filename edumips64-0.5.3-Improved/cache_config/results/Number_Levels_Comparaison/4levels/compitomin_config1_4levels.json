@@ -1,42 +1,42 @@
 {
-  "amat": 15.282608695652176,
-  "number_layers": 4,
-  "caches": [
-    {
-      "size": 64,
-      "hit_rate": 0.4956521739130435,
-      "associativity": "8_WAY_SET_ASSOCIATIVE_FIFO",
-      "strategy": "WRITE_BACK",
-      "block_size": 8,
-      "access_time": 5
-    },
-    {
-      "size": 128,
-      "hit_rate": 0.7086614173228346,
-      "associativity": "8_WAY_SET_ASSOCIATIVE_FIFO",
-      "strategy": "WRITE_BACK",
-      "block_size": 16,
-      "access_time": 10
-    },
-    {
-      "size": 512,
-      "hit_rate": 0.8780487804878049,
-      "associativity": "16_WAY_SET_ASSOCIATIVE_FIFO",
-      "strategy": "WRITE_BACK",
-      "block_size": 32,
-      "access_time": 20
-    },
-    {
-      "size": 1024,
-      "hit_rate": 0.4,
-      "associativity": "16_WAY_SET_ASSOCIATIVE_FIFO",
-      "strategy": "WRITE_BACK",
-      "block_size": 64,
-      "access_time": 25
-    }
-  ],
-  "amat_write": 30.454545454545453,
-  "MMAT": 50,
-  "benchmark_name": "compitomin.s",
-  "amat_read": 14.520547945205479
+    "amat": 11.630434782608695,
+    "number_layers": 4,
+    "caches": [
+        {
+            "size": 64,
+            "hit_rate": 0.6130434782608696,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 8,
+            "access_time": 5
+        },
+        {
+            "size": 128,
+            "hit_rate": 0.8787878787878788,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 16,
+            "access_time": 10
+        },
+        {
+            "size": 512,
+            "hit_rate": 0.6153846153846154,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 32,
+            "access_time": 20
+        },
+        {
+            "size": 1024,
+            "hit_rate": 0.4,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 64,
+            "access_time": 25
+        }
+    ],
+    "amat_write": 25.0,
+    "MMAT": 50,
+    "benchmark_name": "compitomin.s",
+    "amat_read": 10.95890410958904
 }

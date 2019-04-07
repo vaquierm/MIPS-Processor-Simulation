@@ -2,9 +2,9 @@
     "mmat" : 50,
     "caches" : [
       {
-        "size" : "512B",
-        "blockSize" : "32B",
-        "accessTime" : 15,
+        "size" : "128B",
+        "blockSize" : "8B",
+        "accessTime" : 10,
         "mappingScheme" : "FULLY_ASSOCIATIVE_FIFO",
         "writeStrategy" :  "WRITE_BACK"
       }

@@ -1,34 +1,34 @@
 {
-  "amat": 15.173913043478262,
-  "number_layers": 3,
-  "caches": [
-    {
-      "size": 64,
-      "hit_rate": 0.4956521739130435,
-      "associativity": "8_WAY_SET_ASSOCIATIVE_FIFO",
-      "strategy": "WRITE_BACK",
-      "block_size": 8,
-      "access_time": 5
-    },
-    {
-      "size": 128,
-      "hit_rate": 0.7086614173228346,
-      "associativity": "8_WAY_SET_ASSOCIATIVE_FIFO",
-      "strategy": "WRITE_BACK",
-      "block_size": 16,
-      "access_time": 10
-    },
-    {
-      "size": 512,
-      "hit_rate": 0.8780487804878049,
-      "associativity": "16_WAY_SET_ASSOCIATIVE_FIFO",
-      "strategy": "WRITE_BACK",
-      "block_size": 32,
-      "access_time": 20
-    }
-  ],
-  "amat_write": 30.454545454545453,
-  "MMAT": 50,
-  "benchmark_name": "compitomin.s",
-  "amat_read": 14.406392694063927
+    "amat": 11.521739130434783,
+    "number_layers": 3,
+    "caches": [
+        {
+            "size": 64,
+            "hit_rate": 0.6130434782608696,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 8,
+            "access_time": 5
+        },
+        {
+            "size": 128,
+            "hit_rate": 0.8787878787878788,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 16,
+            "access_time": 10
+        },
+        {
+            "size": 512,
+            "hit_rate": 0.6153846153846154,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 32,
+            "access_time": 20
+        }
+    ],
+    "amat_write": 25.0,
+    "MMAT": 50,
+    "benchmark_name": "compitomin.s",
+    "amat_read": 10.844748858447488
 }

@@ -1,1 +1,18 @@
-{"amat":37.608695652173914,"number_layers":1,"caches":[{"size":64,"hit_rate":0.4956521739130435,"associativity":"8_WAY_SET_ASSOCIATIVE_FIFO","strategy":"WRITE_BACK","block_size":8,"access_time":10}],"amat_write":55.45454545454545,"MMAT":50,"benchmark_name":"compitomin.s","amat_read":36.71232876712329}
+{
+    "amat": 31.52173913043479,
+    "number_layers": 1,
+    "caches": [
+        {
+            "size": 64,
+            "hit_rate": 0.6130434782608696,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
+            "strategy": "WRITE_BACK",
+            "block_size": 8,
+            "access_time": 10
+        }
+    ],
+    "amat_write": 46.36363636363637,
+    "MMAT": 50,
+    "benchmark_name": "compitomin.s",
+    "amat_read": 30.77625570776256
+}

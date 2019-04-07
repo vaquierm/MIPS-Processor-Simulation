@@ -1,5 +1,5 @@
 {
-    "amat": 17.652173913043477,
+    "amat": 13.521739130434783,
     "number_layers": 2,
     "caches": [
         {
@@ -12,7 +12,7 @@
         },
         {
             "size": 128,
-            "hit_rate": 0.5405405405405406,
+            "hit_rate": 0.7972972972972973,
             "associativity": "4_WAY_SET_ASSOCIATIVE_FIFO",
             "strategy": "WRITE_BACK",
             "block_size": 16,
@@ -22,5 +22,5 @@
     "amat_write": 20.90909090909091,
     "MMAT": 50,
     "benchmark_name": "compitomin.s",
-    "amat_read": 17.488584474885844
+    "amat_read": 13.150684931506849
 }

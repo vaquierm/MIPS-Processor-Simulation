@@ -1,1 +1,42 @@
-{"amat":15.23913043478261,"number_layers":4,"caches":[{"size":64,"hit_rate":0.5,"associativity":"2_WAY_SET_ASSOCIATIVE_RANDOM","strategy":"WRITE_BACK","block_size":8,"access_time":5},{"size":128,"hit_rate":0.7142857142857143,"associativity":"2_WAY_SET_ASSOCIATIVE_RANDOM","strategy":"WRITE_BACK","block_size":16,"access_time":10},{"size":512,"hit_rate":0.8780487804878049,"associativity":"2_WAY_SET_ASSOCIATIVE_RANDOM","strategy":"WRITE_BACK","block_size":32,"access_time":20},{"size":1024,"hit_rate":0.4,"associativity":"2_WAY_SET_ASSOCIATIVE_RANDOM","strategy":"WRITE_BACK","block_size":64,"access_time":25}],"amat_write":29.545454545454547,"MMAT":50,"benchmark_name":"compitomin.s","amat_read":14.520547945205479}
+{
+    "amat": 15.23913043478261,
+    "number_layers": 4,
+    "caches": [
+        {
+            "size": 64,
+            "hit_rate": 0.5,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_RANDOM",
+            "strategy": "WRITE_BACK",
+            "block_size": 8,
+            "access_time": 5
+        },
+        {
+            "size": 128,
+            "hit_rate": 0.7142857142857143,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_RANDOM",
+            "strategy": "WRITE_BACK",
+            "block_size": 16,
+            "access_time": 10
+        },
+        {
+            "size": 512,
+            "hit_rate": 0.8780487804878049,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_RANDOM",
+            "strategy": "WRITE_BACK",
+            "block_size": 32,
+            "access_time": 20
+        },
+        {
+            "size": 1024,
+            "hit_rate": 0.4,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_RANDOM",
+            "strategy": "WRITE_BACK",
+            "block_size": 64,
+            "access_time": 25
+        }
+    ],
+    "amat_write": 29.545454545454547,
+    "MMAT": 50,
+    "benchmark_name": "compitomin.s",
+    "amat_read": 14.520547945205479
+}

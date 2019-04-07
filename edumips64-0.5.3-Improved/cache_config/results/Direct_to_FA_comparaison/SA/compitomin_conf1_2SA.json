@@ -1,26 +1,26 @@
 {
-  "amat": 16.069565217391304,
-  "number_layers": 2,
-  "caches": [
-    {
-      "size": 64,
-      "hit_rate": 0.5565217391304348,
-      "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
-      "strategy": "WRITE_THROUGH",
-      "block_size": 8,
-      "access_time": 3
-    },
-    {
-      "size": 128,
-      "hit_rate": 0.6448598130841121,
-      "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
-      "strategy": "WRITE_THROUGH",
-      "block_size": 16,
-      "access_time": 8
-    }
-  ],
-  "amat_write": 61.0,
-  "MMAT": 50,
-  "benchmark_name": "compitomin.s",
-  "amat_read": 13.812785388127853
+    "amat": 16.069565217391304,
+    "number_layers": 2,
+    "caches": [
+        {
+            "size": 64,
+            "hit_rate": 0.5565217391304348,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+            "strategy": "WRITE_THROUGH",
+            "block_size": 8,
+            "access_time": 3
+        },
+        {
+            "size": 128,
+            "hit_rate": 0.6448598130841121,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+            "strategy": "WRITE_THROUGH",
+            "block_size": 16,
+            "access_time": 8
+        }
+    ],
+    "amat_write": 61.0,
+    "MMAT": 50,
+    "benchmark_name": "compitomin.s",
+    "amat_read": 13.812785388127853
 }

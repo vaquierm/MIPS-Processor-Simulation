@@ -1,1 +1,42 @@
-{"amat":15.239130434782611,"number_layers":4,"caches":[{"size":64,"hit_rate":0.5304347826086957,"associativity":"2_WAY_SET_ASSOCIATIVE_LRU","strategy":"WRITE_BACK","block_size":8,"access_time":5},{"size":128,"hit_rate":0.6610169491525424,"associativity":"2_WAY_SET_ASSOCIATIVE_LRU","strategy":"WRITE_BACK","block_size":16,"access_time":10},{"size":512,"hit_rate":0.8888888888888888,"associativity":"2_WAY_SET_ASSOCIATIVE_LRU","strategy":"WRITE_BACK","block_size":32,"access_time":20},{"size":1024,"hit_rate":0.4,"associativity":"2_WAY_SET_ASSOCIATIVE_LRU","strategy":"WRITE_BACK","block_size":64,"access_time":25}],"amat_write":25.90909090909091,"MMAT":50,"benchmark_name":"compitomin.s","amat_read":14.703196347031964}
+{
+    "amat": 15.239130434782611,
+    "number_layers": 4,
+    "caches": [
+        {
+            "size": 64,
+            "hit_rate": 0.5304347826086957,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+            "strategy": "WRITE_BACK",
+            "block_size": 8,
+            "access_time": 5
+        },
+        {
+            "size": 128,
+            "hit_rate": 0.6610169491525424,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+            "strategy": "WRITE_BACK",
+            "block_size": 16,
+            "access_time": 10
+        },
+        {
+            "size": 512,
+            "hit_rate": 0.8888888888888888,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+            "strategy": "WRITE_BACK",
+            "block_size": 32,
+            "access_time": 20
+        },
+        {
+            "size": 1024,
+            "hit_rate": 0.4,
+            "associativity": "2_WAY_SET_ASSOCIATIVE_LRU",
+            "strategy": "WRITE_BACK",
+            "block_size": 64,
+            "access_time": 25
+        }
+    ],
+    "amat_write": 25.90909090909091,
+    "MMAT": 50,
+    "benchmark_name": "compitomin.s",
+    "amat_read": 14.703196347031964
+}

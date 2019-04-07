@@ -1,18 +1,18 @@
 {
-    "amat": 11.391304347826088,
+    "amat": 10.434782608695652,
     "number_layers": 3,
     "caches": [
         {
             "size": 64,
-            "hit_rate": 0.6478260869565218,
-            "associativity": "4_WAY_SET_ASSOCIATIVE_FIFO",
+            "hit_rate": 0.7521739130434782,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
             "strategy": "WRITE_BACK",
             "block_size": 16,
             "access_time": 5
         },
         {
             "size": 128,
-            "hit_rate": 0.9021739130434783,
+            "hit_rate": 0.803030303030303,
             "associativity": "direct_mapped",
             "strategy": "WRITE_THROUGH",
             "block_size": 32,
@@ -20,15 +20,15 @@
         },
         {
             "size": 256,
-            "hit_rate": 0.85,
-            "associativity": "4_WAY_SET_ASSOCIATIVE_FIFO",
+            "hit_rate": 0.8636363636363636,
+            "associativity": "FULLY_ASSOCIATIVE_FIFO",
             "strategy": "WRITE_BACK",
             "block_size": 64,
             "access_time": 20
         }
     ],
-    "amat_write": 21.363636363636363,
+    "amat_write": 19.545454545454547,
     "MMAT": 50,
     "benchmark_name": "compitomin.s",
-    "amat_read": 10.89041095890411
+    "amat_read": 9.97716894977169
 }
