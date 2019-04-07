@@ -1,6 +1,7 @@
 # MIPS-Processor-Simulation
 
 The proposed project is to explore the effects of different cache structures on the read, write and overall average memory access time as well as the total number of stalls in the pipeline due to structural hazards caused by the memory module.
+The simulator that was modified is [EduMIPS64](https://www.edumips.org/)
 
 # Repository Structure
 The *Benchmarks* folder is as was provided to us, while the remainder is the actual edumips64 implementation. 
